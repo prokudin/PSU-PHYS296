@@ -1,0 +1,5 @@
+#/use/bin/bash
+cd DSSLIB && make && cd -
+cd CJLIB && make && cd -
+cd LSSLIB && make && cd -
+
