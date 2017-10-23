@@ -2,6 +2,8 @@
 import sys,os
 import numpy as np
 import math
+sys.path.append('./../../') #this appends/searches for the contents of the 
+                  #the dir/folders that are two directories back
 from tools.tools import load_config
 from external.CJLIB.CJ import CJ
 from external.LSSLIB.LSS import LSS
@@ -10,13 +12,13 @@ from qcdlib.tmdlib import PDF,PPDF,FF
 from qcdlib.aux import AUX
 import matplotlib.pyplot as plt
 
-class STFUNCS:
+class STFUNCS:  # creating a class of 
 
   def __init__(self,conf):
     self.aux=conf['aux']  
     self.conf=conf
     eu2,ed2=4/9.,1/9. 
-    self.e2=[]
+    self.e2=[]   #open list
     self.e2.append(0)   # g
     self.e2.append(eu2) # u
     self.e2.append(eu2) # ub
@@ -28,7 +30,7 @@ class STFUNCS:
     self.e2.append(0)   # cb
     self.e2.append(0)   # b
     self.e2.append(0)   # bb
-    self.e2=np.array(self.e2)
+    self.e2=np.array(self.e2)  #create an array of charges
 
     self.Mh={}
     self.Mh['pi+']=self.aux.Mpi
@@ -36,7 +38,7 @@ class STFUNCS:
     self.Mh['k+']=self.aux.Mk
     self.Mh['k-']=self.aux.Mk
 
-    self.D={}
+    self.D={}   #creat a dictionalary
     self.D[1] ={'k1':'pdf','k2':'ff'}
     self.D[2] ={'k1':'ppdf','k2':'ff'}
 
@@ -46,7 +48,7 @@ class STFUNCS:
     elif i==2: return x
     
 
-
+# defining functions
   def get_wq(self,z,k1,k2,target,hadron):
     return z**2*np.abs(self.conf[k1].widths[target]) + np.abs(self.conf[k2].widths[hadron])
 
@@ -63,7 +65,7 @@ class STFUNCS:
     wq=self.get_wq(z,k1,k2,target,hadron)
     gauss=self.get_gauss(z,pT,wq) 
     K=self.get_K(i,x,Q2,z,pT,wq,k1,k2,target,hadron)
-    return np.sum(self.e2*K*F*D*gauss)
+    return np.sum(self.e2*K*F*D*gauss)  #sums up the contributions
 
   def FLL(self,x,Q2,y,z,pT,target,hadron):
     coupling=1.0/137
