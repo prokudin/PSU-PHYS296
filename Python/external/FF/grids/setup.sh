@@ -1,0 +1,4 @@
+export fDSSPATH=`pwd`
+
+
+
