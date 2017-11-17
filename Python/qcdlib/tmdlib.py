@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 import sys,os
-#sys.path.insert(1,'../') 
+sys.path.insert(1,'../') 
 import numpy as np
 import time
 from scipy.integrate import quad
-from external.CJLIB.CJ import CJ
+#from external.CJLIB.CJ import CJ
+from external.PDF.CT10 import CT10
 from external.LSSLIB.LSS import LSS
 from external.DSSLIB.DSS import DSS
 from aux import AUX
@@ -206,13 +207,15 @@ class PPDF(CORE):
 if __name__=='__main__':
 
   conf={}
-  conf['path2CJ'] ='../external/CJLIB'
+#  conf['path2CJ'] ='../external/CJLIB'
+  conf['path2CT10'] ='../external/PDF'
   conf['path2LSS']='../external/LSSLIB'
   conf['path2DSS']='../external/DSSLIB'
 
   conf['order']='LO'
   conf['aux']=AUX()
-  conf['_pdf']=CJ(conf)
+#  conf['_pdf']=CJ(conf)
+  conf['_pdf']=CT10(conf)
   conf['_ppdf']=LSS(conf)
   conf['_ff']=DSS(conf)
   conf['hadron']='pi'

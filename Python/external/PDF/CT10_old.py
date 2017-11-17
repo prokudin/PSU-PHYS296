@@ -12,24 +12,17 @@ from scipy.integrate import quad,dblquad,fixed_quad
 #	a seperate file will allow for calculations with the 
 #	PDFs.
 
-class CT10:
+class CT10(object):
 
-  def __init__(self, conf):
-    #,root='../',filename='ct10.00.pds'):
+  def __init__(self,root='../',filename='ct10.00.pds'):
     """
     Read and parse CT10.pds. May work with other 
     CTEQ pds files, but there is no guarantee.
-    """       
-    root=conf['path2CT10']
-    if root.endswith('/')==False: root+='/'
- 
-    filename='ct10.00.pds'
-                   
+    """
     self.D = {}
-    self.fname = root+filename
+    self.fname = root+'/'+filename
     self._load_PDSfile()
     self.get_interpolators()
-    self.storage={}
 
   def _load_PDSfile(self):
     
@@ -155,37 +148,12 @@ class CT10:
   def get_pdf(self,iParton,x,Q):
     return self.D[iParton](Q,x)[0][0]
 
-  def get_f(self,x,Q2):
-    """
-    out: g,u,ub,d,db,s,sb,c,cb,b,bb
-    """
-    if (x,Q2) not in self.storage:
-      self.storage[(x,Q2)]=np.array([self.get_pdf(0,x,Q2**0.5),
-                  self.get_pdf(1,x,Q2**0.5),
-                  self.get_pdf(-1,x,Q2**0.5),
-                  self.get_pdf(2,x,Q2**0.5),
-                  self.get_pdf(-2,x,Q2**0.5),
-                  self.get_pdf(3,x,Q2**0.5),
-                  self.get_pdf(-3,x,Q2**0.5),
-                  self.get_pdf(4,x,Q2**0.5),
-                  self.get_pdf(-4,x,Q2**0.5),
-                  self.get_pdf(5,x,Q2**0.5),
-                  self.get_pdf(-5,x,Q2**0.5)])
-    return self.storage[(x,Q2)]
-
-
 if __name__== "__main__":
 
-#  ct10=CT10('./')
-  conf={}
-  conf['path2CT10']='./'
-  ct10LO=CT10(conf)
+  ct10=CT10('./')
+  print ct10.get_pdf(2,0.5,10.0)
+  print ct10.deprecated_get_pdf(2,0.5,10.0)
 
-
-  print ct10LO.get_pdf(2,0.5,10.0)
-  print ct10LO.deprecated_get_pdf(2,0.5,10.0)
-
-  print ct10LO.get_f(0.5,10.0)
 
 
 

@@ -5,7 +5,8 @@ import math
 sys.path.append('./../../') #this appends/searches for the contents of the 
                   #the dir/folders that are two directories back
 from tools.tools import load_config
-from external.CJLIB.CJ import CJ
+from external.PDF.CT10 import CT10
+#from external.CJLIB.CJ import CJ
 from external.LSSLIB.LSS import LSS
 from external.DSSLIB.DSS import DSS
 from qcdlib.tmdlib import PDF,PPDF,FF
@@ -81,13 +82,15 @@ class STFUNCS:  # creating a class of
 if __name__=='__main__':
 
   conf={}
-  conf['path2CJ'] ='../../external/CJLIB'
+#  conf['path2CJ'] ='../../external/CJLIB'
+  conf['path2CT10'] ='../../external/PDF'
   conf['path2LSS']='../../external/LSSLIB'
   conf['path2DSS']='../../external/DSSLIB'
 
   conf['order']='LO'
   conf['aux']  =AUX()
-  conf['_pdf'] =CJ(conf)
+#  conf['_pdf'] =CJ(conf)
+  conf['_pdf'] =CT10(conf)
   conf['_ppdf']=LSS(conf)
   conf['_ff']  =DSS(conf)
 
