@@ -6,19 +6,13 @@ from scipy.integrate import quad
 import pandas as pd
 import time
 from tools.residuals import _RESIDUALS
-from external.CJLIB.CJ import CJ
+from external.PDF.CT10 import CT10
+#from external.CJLIB.CJ import CJ
 from external.DSSLIB.DSS import DSS
 from external.LSSLIB.LSS import LSS
 from reader import READER
 from stfuncs import STFUNCS
 from qcdlib.tmdlib import PDF,PPDF,FF
-from qcdlib.tmdlib import TRANSVERSITY
-from qcdlib.tmdlib import BOERMULDERS
-from qcdlib.tmdlib import SIVERS
-from qcdlib.tmdlib import PRETZELOSITY
-from qcdlib.tmdlib import COLLINS
-from qcdlib.tmdlib import WORMGEARG
-from qcdlib.tmdlib import WORMGEARH
 from qcdlib.aux import AUX
 from qcdlib.alphaS import ALPHAS
 from obslib.dis.stfuncs import STFUNCS as DIS_STFUNCS
@@ -59,110 +53,36 @@ class RESIDUALS(_RESIDUALS):
            +self.dis_stfuncs.get_F2(x,Q2,'n')
       thy = 2*np.pi*pT*FUU/F2
 
-    elif obs=='AUTcollins':
 
-      if col=='HERMES':  factor= 1   # hermes is sin(phi_s+phi_h)
-      if col=='COMPASS': factor=-1   # compass is sin(phi_s+phi_h+pi)
-      if col=='HERMES':  factor*= 2*(1-y)/(1+(1-y)**2) # add depolarization factor only for HERMES
+    elif obs=='ALL':
 
-      Q2=2.0
+      factor = 1  # WORK HERE!!!!
+      if col=='HERMES':  factor = y*(1.0-y/2)/(1.0-y+y**2/2) # add depolarization factor only for HERMES
+      if col=='clas':  factor = y*(1.0-y/2)/(1.0-y+y**2/2) # add depolarization factor only for CLAS
 
-      if target=='proton': 
-
-        FUT=self.stfuncs.get_FX(4,x,z,Q2,pT,'p',hadron)
-        FUU=self.stfuncs.get_FX(1,x,z,Q2,pT,'p',hadron)
-        thy = factor*FUT/FUU
-
-      elif target=='neutron': 
-
-        FUT=self.stfuncs.get_FX(4,x,z,Q2,pT,'n',hadron)
-        FUU=self.stfuncs.get_FX(1,x,z,Q2,pT,'n',hadron)
-        thy = factor*FUT/FUU
-
-      elif target=='deuteron': 
-
-        FUT=self.stfuncs.get_FX(4,x,z,Q2,pT,'p',hadron)\
-           +self.stfuncs.get_FX(4,x,z,Q2,pT,'n',hadron)
-        FUU=self.stfuncs.get_FX(1,x,z,Q2,pT,'p',hadron)\
-           +self.stfuncs.get_FX(1,x,z,Q2,pT,'n',hadron)
-
-        thy = factor*FUT/FUU
-
-    elif obs=='AUTsivers':
-
-      Q2=2.0
 
       if target=='proton': 
 
-        FUT=self.stfuncs.get_FX(5,x,z,Q2,pT,'p',hadron)
+        FLL=self.stfuncs.get_FX(2,x,z,Q2,pT,'p',hadron)
         FUU=self.stfuncs.get_FX(1,x,z,Q2,pT,'p',hadron)
-        thy = FUT/FUU
+        thy = factor*FLL/FUU
 
       elif target=='neutron': 
 
-        FUT=self.stfuncs.get_FX(5,x,z,Q2,pT,'n',hadron)
+        FLL=self.stfuncs.get_FX(2,x,z,Q2,pT,'n',hadron)
         FUU=self.stfuncs.get_FX(1,x,z,Q2,pT,'n',hadron)
-        thy = FUT/FUU
+        thy = factor*FLL/FUU
 
       elif target=='deuteron': 
 
-        FUT=self.stfuncs.get_FX(5,x,z,Q2,pT,'p',hadron)\
-           +self.stfuncs.get_FX(5,x,z,Q2,pT,'n',hadron)
+        FLL=self.stfuncs.get_FX(2,x,z,Q2,pT,'p',hadron)\
+           +self.stfuncs.get_FX(2,x,z,Q2,pT,'n',hadron)
         FUU=self.stfuncs.get_FX(1,x,z,Q2,pT,'p',hadron)\
            +self.stfuncs.get_FX(1,x,z,Q2,pT,'n',hadron)
 
-        thy = FUT/FUU
+        thy = factor*FLL/FUU
 
-    elif obs == 'AUUcos':      
 
-      Q2=2.0
-
-      if target == 'proton':
-
-        FUUcos = self.stfuncs.get_FX(16, x, z, Q2, pT, 'p', hadron) \
-               + self.stfuncs.get_FX(17, x, z, Q2, pT, 'p', hadron)
-        FUU    = self.stfuncs.get_FX(1, x, z, Q2, pT, 'p', hadron)
-      
-      elif target == 'neutron':
-
-        FUUcos = self.stfuncs.get_FX(16, x, z, Q2, pT, 'n', hadron) \
-               + self.stfuncs.get_FX(17, x, z, Q2, pT, 'n', hadron)
-        FUU    = self.stfuncs.get_FX(1, x, z, Q2, pT, 'n', hadron)
-      
-      elif target == 'deuteron':
-
-        FUUcos = self.stfuncs.get_FX(16, x, z, Q2, pT, 'p', hadron) \
-               + self.stfuncs.get_FX(17, x, z, Q2, pT, 'p', hadron) \
-               + self.stfuncs.get_FX(16, x, z, Q2, pT, 'n', hadron) \
-               + self.stfuncs.get_FX(17, x, z, Q2, pT, 'n', hadron)
-
-        FUU    = self.stfuncs.get_FX(1, x, z, Q2, pT, 'p', hadron)\
-               + self.stfuncs.get_FX(1, x, z, Q2, pT, 'n', hadron)
-
-      epsilon = (1-y)/(1-y+0.5*y**2)
-      thy = np.sqrt(2*epsilon*(1+epsilon))*FUUcos/FUU
-
-    elif obs == 'AUUcos2':      
-
-      if target == 'proton':
-        FUUcos2 = self.stfuncs.get_FX(7, x, z, Q2, pT, 'p', hadron)
-        FUU     = self.stfuncs.get_FX(1, x, z, Q2, pT, 'p', hadron)
-      
-      elif target == 'neutron':
-
-        FUUcos2 = self.stfuncs.get_FX(7, x, z, Q2, pT, 'n', hadron)
-        FUU     = self.stfuncs.get_FX(1, x, z, Q2, pT, 'n', hadron)
-      
-      elif target == 'deuteron':
-
-        FUUcos2 = self.stfuncs.get_FX(7, x, z, Q2, pT, 'p', hadron)\
-                + self.stfuncs.get_FX(7, x, z, Q2, pT, 'n', hadron)
-
-        FUU     = self.stfuncs.get_FX(1, x, z, Q2, pT, 'p', hadron)\
-                + self.stfuncs.get_FX(1, x, z, Q2, pT, 'n', hadron)
-
-      epsilon = (1-y)/(1-y+0.5*y**2)
-      thy = (epsilon)*FUUcos2/FUU
 
     else:
       print 'ERR: exp=%d obs=%s and target=%s not implemented'%(k,obs,target)
