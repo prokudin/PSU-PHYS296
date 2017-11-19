@@ -1,5 +1,12 @@
 ## Instruction to setup PSU Phys server on windows
-# Last Up Date 11-12-17
+# File Created 11-12-17 - zes5027
+# Up Date 11-17-17 - zes5027
+	- Added: Installing Physic extenstions for Python
+	- Added: How to pull the reposatry
+	- Added: Review of linix consel commands
+# Note: When instructed to enter commands in the linix consel paste or type the
+#	charitures between the quotations, do not include the quotations or the leading
+#	and trialing white space. 
 
 Installation of required software.
 
@@ -59,7 +66,8 @@ Note: First you must log into the surver.
 a) Generate a key for your git
 	- Enter ' ssh-keygen -t rsa -b 4096 -C "zack0179@gmail.com" '
 	- Note: you must use the personal email for your GITHUB
-	- Press enter untill proped to make a passfrass, this will be used latter so remeber it or wright it down. 
+	- Press enter untill complet
+	- Note: when proped to make a passphrase, just click enter with out a passphrase
 b) Add the key to your GITHUB account
 	- Enter the command ' more < ~/.ssh/id_rsa.pub '
 	- copy the results and pase them into your GITHUB account
@@ -74,3 +82,38 @@ b) Add the key to your GITHUB account
 			- If prompted, confirm your GitHub password.
 c) Clone the respoatry
 	- In the Surver client: enter the comand ' git clone git@github.com:prokudin/PSU-PHYS296.git ' 
+d) Move the file '.bashrc' from the dircetry 'GIT/PSU-PHYS296' to your root dirctery
+	- Enter the command ' cd ~/GIT/PSU-PHYS296/ '
+	- Enter the command ' cd Servers '
+	- Enter the command ' cp .bashrc ~/ ' 
+	- Enter the command ' cd ~/ '
+	- Enter the command ' source .bashrc ' 
+
+Installing Physic extenstions for Python
+
+1) Go to the directery: Python/external
+	- Enter: ' ./install '
+2) Test the python file stfuncs.py
+	- Go to the directery; Python/obslib/sidis
+		- Enter: spyder stfuncs.py
+		- Source the file
+
+How to pull the reposatry
+
+1) Go to the directery: GIT/PSU-PHYS296
+	- Enter: ' git pull '
+
+Review of linix consel commands
+
+>ls # list dir
+>pwd # current dir
+>cd 'name' # change dir
+#	- Note tab will addio complet the dir name. 
+>mkdir 'newFolderName' # Create Dir
+>cd .. # go to uppper level (exit a dir)
+>cd ~ # to root dir
+>spyder & # open single insentce
+>spyder -- # open new insence
+>ls -al ~fileNameOrExtention #surch for file name or extention  
+>more < ~/.ssh/id_rsa.pub # Print file content
+>cat < ~/.ssh/id_rsa.pub # Print file content
