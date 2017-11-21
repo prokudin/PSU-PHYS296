@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import sys,os
 import argparse
 import numpy as np

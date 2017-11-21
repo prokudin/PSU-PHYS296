@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import sys,os
 import numpy as np
 from tools.tools import load,save,checkdir,load_config
