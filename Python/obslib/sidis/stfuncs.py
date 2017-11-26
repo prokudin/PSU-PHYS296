@@ -34,6 +34,8 @@ class STFUNCS:  # creating a class of
     self.e2=np.array(self.e2)  #create an array of charges
 
     self.Mh={}
+    self.Mh['h+']=self.aux.Mpi
+    self.Mh['h-']=self.aux.Mpi
     self.Mh['pi+']=self.aux.Mpi
     self.Mh['pi-']=self.aux.Mpi
     self.Mh['k+']=self.aux.Mk

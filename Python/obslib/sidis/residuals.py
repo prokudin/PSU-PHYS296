@@ -53,6 +53,13 @@ class RESIDUALS(_RESIDUALS):
            +self.dis_stfuncs.get_F2(x,Q2,'n')
       thy = 2*np.pi*pT*FUU/F2
 
+    elif obs=='M_Compass' and target=='deuteron': 
+
+      FUU = self.stfuncs.get_FX(1,x,z,Q2,pT,'p',hadron)\
+           +self.stfuncs.get_FX(1,x,z,Q2,pT,'n',hadron)
+      F2  = self.dis_stfuncs.get_F2(x,Q2,'p')\
+           +self.dis_stfuncs.get_F2(x,Q2,'n')
+      thy = np.pi*FUU/F2
 
     elif obs=='ALL':
 
