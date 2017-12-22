@@ -54,7 +54,8 @@ class RESMAN:
     conf['pdf']  =qcdlib.tmdlib.PDF(conf)
     conf['ppdf'] =qcdlib.tmdlib.PPDF(conf)
     conf['ff']   =qcdlib.tmdlib.FF(conf)
-    
+    conf['gk']   =qcdlib.tmdlib.GK(conf)
+   
   def setup_sidis(self):
     conf=self.conf
     conf['sidis tabs']      =obslib.sidis.reader.READER(conf).load_data_sets('sidis')

@@ -9,7 +9,7 @@ from external.PDF.CT10 import CT10
 #from external.CJLIB.CJ import CJ
 from external.LSSLIB.LSS import LSS
 from external.DSSLIB.DSS import DSS
-from qcdlib.tmdlib import PDF,PPDF,FF
+from qcdlib.tmdlib import PDF,PPDF,FF,GK
 from qcdlib.aux import AUX
 import matplotlib.pyplot as plt
 
@@ -55,6 +55,11 @@ class STFUNCS:  # creating a class of
   def get_wq(self,z,k1,k2,target,hadron):
     return z**2*np.abs(self.conf[k1].widths[target]) + np.abs(self.conf[k2].widths[hadron])
 
+  def get_wq_evolution(self,z,x,Q):
+    #print self.conf['ff'].widths['pi+'] # self.conf['gk'].g2  
+    return 4*z**2 * self.conf['gk'].g2 * np.log( Q/self.conf['gk'].Q0 )
+
+
   def get_gauss(self,z,pT,wq):
     return np.exp(-pT**2/wq)/(np.pi*wq)
 
@@ -63,9 +68,10 @@ class STFUNCS:  # creating a class of
     k2=self.D[i]['k2']
     if k1==None or k2==None: return 0
     mu2=Q2
+    Q = np.sqrt(Q2)
     F=self.conf[k1].get_C(x,mu2,target)
     D=self.conf[k2].get_C(z,mu2,hadron)
-    wq=self.get_wq(z,k1,k2,target,hadron)
+    wq=self.get_wq(z,k1,k2,target,hadron) + self.get_wq_evolution(z,x,Q)
     gauss=self.get_gauss(z,pT,wq) 
     K=self.get_K(i,x,Q2,z,pT,wq,k1,k2,target,hadron)
     return np.sum(self.e2*K*F*D*gauss)  #sums up the contributions
@@ -99,6 +105,7 @@ if __name__=='__main__':
   conf['pdf']=PDF(conf)
   conf['ppdf']=PPDF(conf)
   conf['ff']=FF(conf)
+  conf['gk']=GK(conf)
 
 
   stfuncs=STFUNCS(conf)

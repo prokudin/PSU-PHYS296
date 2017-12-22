@@ -166,6 +166,21 @@ class FF(CORE):
     C[0]=0 # glue is not supported
     return C
 
+# class for "toy" evolution
+class GK(CORE):
+
+  def __init__(self,conf):
+    self.aux=conf['aux']
+    self.conf=conf
+    self.set_default_params()
+#    self.setup()
+
+  def set_default_params(self):
+    self.g2=0.1
+    self.Q0=1.
+
+#  def setup(self):
+
 
 class PPDF(CORE):
 
@@ -223,6 +238,7 @@ if __name__=='__main__':
   conf['pdf']=PDF(conf)
   conf['ppdf']=PPDF(conf)
   conf['ff']=FF(conf)
+  conf['gk']=GK(conf)
 
   x=0.15
   Q2=2.4

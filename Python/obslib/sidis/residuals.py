@@ -12,7 +12,7 @@ from external.DSSLIB.DSS import DSS
 from external.LSSLIB.LSS import LSS
 from reader import READER
 from stfuncs import STFUNCS
-from qcdlib.tmdlib import PDF,PPDF,FF
+from qcdlib.tmdlib import PDF,PPDF,FF,GK
 from qcdlib.aux import AUX
 from qcdlib.alphaS import ALPHAS
 from obslib.dis.stfuncs import STFUNCS as DIS_STFUNCS
