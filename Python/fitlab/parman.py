@@ -84,6 +84,7 @@ class PARMAN:
     if 'pdf' in semaphore and semaphore['pdf']==1: self.set_pdf_params()
     if 'ff'  in semaphore and semaphore['ff']==1:  self.set_ff_params()
     if 'ppdf'  in semaphore and semaphore['ppdf']==1:  self.set_ppdf_params()
+    if 'gk'  in semaphore and semaphore['gk']==1:  self.set_gk_params()
 
   def set_ppdf_params(self):
     self.conf['ppdf'].widths0['valence']=self.conf['params']['ppdf']['widths0 valence']['value']
@@ -95,13 +96,17 @@ class PARMAN:
     self.conf['pdf'].widths0['sea']=self.conf['params']['pdf']['widths0 sea']['value']
     self.conf['pdf'].setup() 
   
-  
   def set_ff_params(self):
     self.conf['ff'].widths0['pi+ fav']=self.conf['params']['ff']['widths0 pi+ fav']['value']
     self.conf['ff'].widths0['pi+ unfav']=self.conf['params']['ff']['widths0 pi+ unfav']['value']
     self.conf['ff'].widths0['k+ fav']=self.conf['params']['ff']['widths0 k+ fav']['value']
     self.conf['ff'].widths0['k+ unfav']=self.conf['params']['ff']['widths0 k+ unfav']['value']
     self.conf['ff'].setup() 
+
+  def set_gk_params(self):
+    self.conf['gk'].Q0=self.conf['params']['gk']['Q0']['value']
+    self.conf['gk'].g2=self.conf['params']['gk']['g2']['value']
+  
 
 
 if __name__=='__main__':
