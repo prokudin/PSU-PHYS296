@@ -57,7 +57,8 @@ class STFUNCS:  # creating a class of
 
   def get_wq_evolution(self,z,x,Q):
     #print self.conf['ff'].widths['pi+'] # self.conf['gk'].g2  
-    return 4*z**2 * self.conf['gk'].g2 * np.log( Q/self.conf['gk'].Q0 )
+    wq=np.ones(len(self.e2))
+    return wq * 4*z**2 * self.conf['gk'].g2 * np.log( Q/self.conf['gk'].Q0 )
 
 
   def get_gauss(self,z,pT,wq):
