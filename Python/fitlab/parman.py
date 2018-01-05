@@ -59,7 +59,7 @@ class PARMAN:
 
     if initial:
       #for k in semaphore: semaphore[k]=1
-      for k in conf['params']: semaphore[k]=1
+      for k in self.conf['params']: semaphore[k]=1
 
     self.propagate_params(semaphore)
 
