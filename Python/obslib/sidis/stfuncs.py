@@ -56,10 +56,8 @@ class STFUNCS:  # creating a class of
     return z**2*np.abs(self.conf[k1].widths[target]) + np.abs(self.conf[k2].widths[hadron])
 
   def get_wq_evolution(self,z,x,Q):
-    #print self.conf['ff'].widths['pi+'] # self.conf['gk'].g2  
     wq=np.ones(len(self.e2))
-    return wq * 4*z**2 * self.conf['gk'].g2 * np.log( Q/self.conf['gk'].Q0 )
-
+    return wq * 4*z**2 * self.conf['gk'].g2 * np.log( (z*Q)/(x*self.conf['gk'].Q0) )
 
   def get_gauss(self,z,pT,wq):
     return np.exp(-pT**2/wq)/(np.pi*wq)
@@ -72,7 +70,7 @@ class STFUNCS:  # creating a class of
     Q = np.sqrt(Q2)
     F=self.conf[k1].get_C(x,mu2,target)
     D=self.conf[k2].get_C(z,mu2,hadron)
-    wq=self.get_wq(z,k1,k2,target,hadron) + self.get_wq_evolution(z,x,Q)
+    wq=self.get_wq(z,k1,k2,target,hadron) +  self.get_wq_evolution(z,x,Q)
     gauss=self.get_gauss(z,pT,wq) 
     K=self.get_K(i,x,Q2,z,pT,wq,k1,k2,target,hadron)
     return np.sum(self.e2*K*F*D*gauss)  #sums up the contributions
