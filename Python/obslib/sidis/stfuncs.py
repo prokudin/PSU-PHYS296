@@ -71,7 +71,7 @@ class STFUNCS:  # creating a class of
     Q = np.sqrt(Q2)
     F=self.conf[k1].get_C(x,mu2,target)
     D=self.conf[k2].get_C(z,mu2,hadron)
-    wq=self.get_wq(z,k1,k2,target,hadron) +  self.get_wq_evolution(z,x,Q)
+    wq=self.get_wq(z,k1,k2,target,hadron)  +  self.get_wq_evolution(z,x,Q)
     gauss=self.get_gauss(z,pT,wq) 
     K=self.get_K(i,x,Q2,z,pT,wq,k1,k2,target,hadron)
     return np.sum(self.e2*K*F*D*gauss)  #sums up the contributions

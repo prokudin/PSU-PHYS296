@@ -65,9 +65,9 @@ class RESIDUALS(_RESIDUALS):
 
       factor = 1  # WORK HERE!!!!
       if col=='HERMES':  factor = y*(1.0-y/2)/(1.0-y+y**2/2) # add depolarization factor only for HERMES
-      if col=='clas':  factor = y*(1.0-y/2)/(1.0-y+y**2/2) # add depolarization factor only for CLAS
+      if col=='clas':  factor = 1. # y*(1.0-y/2)/(1.0-y+y**2/2) # add depolarization factor only for CLAS
 
-
+      
       if target=='proton': 
 
         FLL=self.stfuncs.get_FX(2,x,z,Q2,pT,'p',hadron)
