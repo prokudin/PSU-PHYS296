@@ -1,0 +1,7 @@
+Folder z>0.1
+A_UT1_h+-_xzpt_zgt0.1_3dg.dat
+Cuts: [Q2>1.0; 0.003<x<0.9; 0.1<y<0.9; W^2>10.0; z>0.1; p_T>0.1]
+
+Folder z>0.2
+A_UT1_h+-_xzpt_zgt0.2_3dg.dat
+Cuts: [Q2>1.0; 0.003<x<0.9; 0.1<y<0.9; W^2>10.0; z>0.2; p_T>0.1]
