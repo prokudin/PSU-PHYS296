@@ -36,24 +36,24 @@ conf['params']={}
 
 
 conf['params']['ppdf']={}
-conf['params']['ppdf']['widths0 valence']  = {'value':<<    6.76985298438464333515e-01>>,'fixed':False,'min':0,'max':10}
+conf['params']['ppdf']['widths0 valence']  = {'value':<<    6.76910202318145692857e-01>>,'fixed':False,'min':0,'max':10}
 conf['params']['ppdf']['widths0 sea']      = {'value':<<    1.00000000000000000000e+01>>,'fixed':False,'min':0,'max':10}
 
 
 conf['params']['pdf']={}
-conf['params']['pdf']['widths0 valence']  = {'value':<<    5.70548710037126483030e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['pdf']['widths0 sea']      = {'value':<<    6.28159806700851808259e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['pdf']['widths0 valence']  = {'value':<<    5.70523852569334466445e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['pdf']['widths0 sea']      = {'value':<<    6.28623603298693156560e-01>>,'fixed':False,'min':0,'max':1}
 
 conf['params']['ff']={}
-conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    1.17124903666507018674e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    1.36089842789906989573e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 k+ fav']    = {'value':<<    1.33683995738424543642e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 k+ unfav']  = {'value':<<    1.83381483849380078066e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    1.17131842925750184747e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    1.36079629420065184586e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 k+ fav']    = {'value':<<    1.33700177202805969845e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 k+ unfav']  = {'value':<<    1.83440557041980034647e-01>>,'fixed':False,'min':0,'max':1}
 
 
 conf['params']['gk']={}
-conf['params']['gk']['g2']   = {'value':<<    4.33672078058222609798e-04>>,'fixed':False,'min':0,'max':10}
-conf['params']['gk']['Q0'] = {'value':<<    1.67195795605026775732e+00>>,'fixed':False,'min':1,'max':10}
+conf['params']['gk']['g2']   = {'value':<<    4.28219936160267877767e-04>>,'fixed':False,'min':0,'max':10}
+conf['params']['gk']['Q0'] = {'value':<<    1.67200403317010826143e+00>>,'fixed':False,'min':1,'max':10}
 
 ############################################################################
 # set data sets
