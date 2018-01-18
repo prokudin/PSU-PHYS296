@@ -36,8 +36,8 @@ conf['params']={}
 
 
 conf['params']['ppdf']={}
-conf['params']['ppdf']['widths0 valence']  = {'value':<<    5.23701596307329708679e-01>>,'fixed':False,'min':0,'max':10}
-conf['params']['ppdf']['widths0 sea']      = {'value':<<    0.00000000000000000000e+00>>,'fixed':False,'min':0,'max':10}
+conf['params']['ppdf']['widths0 valence']  = {'value':<<    1.09361479714813469855e-01>>,'fixed':False,'min':0,'max':10}
+conf['params']['ppdf']['widths0 sea']      = {'value':<<    2.18478703409406538327e+00>>,'fixed':False,'min':0,'max':10}
 
 
 conf['params']['pdf']={}
@@ -67,10 +67,10 @@ conf['datasets']['sidis']={}
 
 conf['datasets']['sidis']['filters']={}
 conf['datasets']['sidis']['filters'][0]={}
-conf['datasets']['sidis']['filters'][0]['idx']=[2003,2004]
+conf['datasets']['sidis']['filters'][0]['idx']=[2000,2001,2003,2004]
 #conf['datasets']['sidis']['filters'][0]['idx']=[2000,2001]
-conf['datasets']['sidis']['filters'][0]['filter']="z<0.6 and Q2>1.69 and pT>0.2 and pT<0.9"
-#conf['datasets']['sidis']['filters'][0]['filter']="z>0"
+#conf['datasets']['sidis']['filters'][0]['filter']="z<0.6 and Q2>1.69 and pT>0.2 and pT<0.9"
+conf['datasets']['sidis']['filters'][0]['filter']="z>0"
 
 conf['datasets']['sidis']['xlsx']={}
 
@@ -85,8 +85,8 @@ conf['datasets']['sidis']['xlsx']={}
 #conf['datasets']['sidis']['xlsx'][1007]='../database/sidis/expdata/1007.xlsx'  # |  deuteron | k-    | M_Hermes | hermes 
 
     
-#conf['datasets']['sidis']['xlsx'][2000]='../database/sidis/expdata/2000.xlsx'  # |  proton | pi+    | ALL | clas 
-#conf['datasets']['sidis']['xlsx'][2001]='../database/sidis/expdata/2001.xlsx'  # |  proton | pi-    | ALL | clas 
+conf['datasets']['sidis']['xlsx'][2000]='../database/sidis/expdata/2000.xlsx'  # |  proton | pi+    | ALL | clas 
+conf['datasets']['sidis']['xlsx'][2001]='../database/sidis/expdata/2001.xlsx'  # |  proton | pi-    | ALL | clas 
 #conf['datasets']['sidis']['xlsx'][2002]='../database/sidis/expdata/2002.xlsx'  # |  proton | pi0    | ALL | clas 
     
 conf['datasets']['sidis']['xlsx'][2003]='../database/sidis/expdata/2003.xlsx'  # |  proton | pi+    | ALL | compass 

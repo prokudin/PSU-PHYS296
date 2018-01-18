@@ -30,7 +30,7 @@ class LSS:
     sb=s   #for now
     cb=0.0 #for now
     bb=0.0 #for now
-    return np.array([g,u,ub,d,db,s,sb,c,cb,b,bb])
+    return np.array([g,u,ub,d,db,s,sb,c,cb,b,bb])/x
  
   def get_f(self,x,Q2):
     if (x,Q2) not in self.storage:

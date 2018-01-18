@@ -13,7 +13,8 @@
 | 2000  | [link][?]    | proton   | pi+    | ALL        | clas       | PT         |
 | 2001  | [link][?]    | proton   | pi-    | ALL        | clas       | PT         |
 | 2002  | [link][?]    | proton   | pi0    | ALL        | clas       | PT         |
-
+| 2003  | [link][?]    | proton   | h+     | ALL        | compass    | x          |
+| 2004  | [link][?]    | proton   | h-     | ALL        | compass    | x          |
 
 
 
