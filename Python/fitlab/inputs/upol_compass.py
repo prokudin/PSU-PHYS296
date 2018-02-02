@@ -35,18 +35,18 @@ conf['path2DSS']='../external/DSSLIB'
 conf['params']={}
 
 conf['params']['pdf']={}
-conf['params']['pdf']['widths0 valence']  = {'value':<<    8.77428805103762421425e-01>>,'fixed':False,'min':0,'max':10}
-conf['params']['pdf']['widths0 sea']      = {'value':<<    0.00000000000000000000e+00>>,'fixed':False,'min':0,'max':10}
+conf['params']['pdf']['widths0 valence']  = {'value':<<    1.84417793008498698271e-01>>,'fixed':False,'min':0,'max':10}
+conf['params']['pdf']['widths0 sea']      = {'value':<<    3.07841750816280068648e-02>>,'fixed':False,'min':0,'max':10}
 
 conf['params']['ff']={}
-conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    9.80496629195329316708e-02>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    4.85098833271322971150e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    1.40164525507112336378e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    5.26635885561056782400e-01>>,'fixed':False,'min':0,'max':1}
 conf['params']['ff']['widths0 k+ fav']    = {'value':<<    1.33775551334897768729e-01>>,'fixed':False,'min':0,'max':1}
 conf['params']['ff']['widths0 k+ unfav']  = {'value':<<    1.83430383139499497691e-01>>,'fixed':False,'min':0,'max':1}
 
 conf['params']['gk']={}
-conf['params']['gk']['g2']   = {'value':<<    1.32731289969618693192e-01>>,'fixed':False,'min':0,'max':10}
-conf['params']['gk']['Q0'] = {'value':<<    1.66722892879631734431e+00>>,'fixed':False,'min':1,'max':10}
+conf['params']['gk']['g2']   = {'value':<<    2.42841198820627823807e-01>>,'fixed':False,'min':0,'max':10}
+conf['params']['gk']['Q0'] = {'value':<<    1.73881661600089509889e+00>>,'fixed':False,'min':1,'max':10}
 
 
 ############################################################################
@@ -64,7 +64,7 @@ conf['datasets']['sidis']['filters'][0]={}
 #conf['datasets']['sidis']['filters'][0]['idx']=[1000,1001,1004,1005,1002,1003,1006,1007]
 #conf['datasets']['sidis']['filters'][0]['idx']=[1000,1001,1004,1005,1002,1003,1006,1007,5001,5002]
 conf['datasets']['sidis']['filters'][0]['idx']=[5001,5002]
-conf['datasets']['sidis']['filters'][0]['filter']="z<0.6 and Q2>1.69 and pT>0.2 and pT<0.9"
+conf['datasets']['sidis']['filters'][0]['filter']="z<0.6 and Q2>1.69 and pT>0.2 and pT<0.9 and (pT/z)**2<0.05*Q2"
 
 conf['datasets']['sidis']['xlsx']={}
 
