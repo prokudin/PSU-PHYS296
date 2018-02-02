@@ -8,6 +8,7 @@ from scipy.integrate import quad
 from external.PDF.CT10 import CT10
 from external.LSSLIB.LSS import LSS
 from external.DSSLIB.DSS import DSS
+from external.GRSVLIB.DSS import GRSV
 from aux import AUX
 from scipy.special import gamma
 
@@ -225,13 +226,15 @@ if __name__=='__main__':
 #  conf['path2CJ'] ='../external/CJLIB'
   conf['path2CT10'] ='../external/PDF'
   conf['path2LSS']='../external/LSSLIB'
+  conf['path2GRSV']='../external/GRSVLIB'
   conf['path2DSS']='../external/DSSLIB'
 
   conf['order']='LO'
   conf['aux']=AUX()
 #  conf['_pdf']=CJ(conf)
   conf['_pdf']=CT10(conf)
-  conf['_ppdf']=LSS(conf)
+#  conf['_ppdf']=LSS(conf)
+  conf['_ppdf']=GRSV(conf)
   conf['_ff']=DSS(conf)
   conf['hadron']='pi'
 

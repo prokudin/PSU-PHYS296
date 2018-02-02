@@ -53,6 +53,18 @@
 *********************************************************************
 *
       SUBROUTINE PARPOL (ISET, X, Q2, U, D, UB, DB, ST, GL, G1P, G1N)
+Cf2py intent(in)  iset
+Cf2py intent(in)  x
+Cf2py intent(in)  Q2
+Cf2py intent(out)  u
+Cf2py intent(out)  d
+Cf2py intent(out)  ub
+Cf2py intent(out)  db
+Cf2py intent(out)  st
+Cf2py intent(out)  gl
+Cf2py intent(out)  g1p
+Cf2py intent(out)  g1n
+
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
       PARAMETER (NPART=8, NX=42, NQ=30, NARG=2)
       DIMENSION XUF(NX,NQ), XDF(NX,NQ), XUBF(NX,NQ), XDBF(NX,NQ), 
