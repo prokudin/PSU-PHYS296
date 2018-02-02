@@ -1,0 +1,33 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module GRSV ! in 
+    interface  ! in :GRSV
+        subroutine parpol(iset,x,q2,u,d,ub,db,st,gl,g1p,g1n) ! in :GRSV:GRSV.f
+            integer :: iset
+            double precision :: x
+            double precision :: q2
+            double precision intent(out) :: u
+            double precision intent(out) :: d
+            double precision intent(out) :: ub
+            double precision intent(out) :: db
+            double precision intent(out) :: st
+            double precision intent(out) :: gl
+            double precision intent(out) :: g1p
+            double precision intent(out) :: g1n
+            integer intent(hide) :: iini = 0
+            common /intini/ iini
+        end subroutine parpol
+        function dfint2(narg,arg,nent,ent,table) ! in :GRSV:GRSV.f
+            integer :: narg
+            double precision dimension(5) :: arg
+            integer dimension(5) :: nent
+            double precision dimension(73) :: ent
+            double precision dimension(1200) :: table
+            double precision :: dfint2
+        end function dfint2
+    end interface 
+end python module GRSV
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/
