@@ -2,4 +2,5 @@
 cd DSSLIB && make && cd -
 cd CJLIB && make && cd -
 cd LSSLIB && make && cd -
+cd GRSVLIB && make && cd -
 
