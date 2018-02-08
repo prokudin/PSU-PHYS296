@@ -76,6 +76,18 @@ class STFUNCS:  # creating a class of
     K=self.get_K(i,x,Q2,z,pT,wq,k1,k2,target,hadron)
     return np.sum(self.e2*K*F*D*gauss)  #sums up the contributions
 
+  def FLL(self,x,Q2,y,z,pT,target,hadron):
+    coupling=1.0/137
+    p2=y*(1.0-y/2)/(1.0-y+y**2/2)
+    factor=coupling**2/(x*y*Q2)*(1-y+y**2/2)
+    return factor*(p2*self.get_FX(2,x,z,Q2,pT,target,hadron))
+
+  def FUU(self,x,Q2,y,z,pT,target,hadron):
+    coupling=1.0/137
+    factor=coupling**2/(x*y*Q2)*(1-y+y**2)
+    return factor*(self.get_FX(1,x,z,Q2,pT,target,hadron))
+
+    
 # bstar
   def bstar(self,b):
     return b/np.sqrt(1+b**2/self.conf['gk'].bmax**2)
@@ -106,16 +118,11 @@ class STFUNCS:  # creating a class of
     K=self.get_K(i,x,Q2,z,pT,wq,k1,k2,target,hadron)
     return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
     
-  def FLL(self,x,Q2,y,z,pT,target,hadron):
-    coupling=1.0/137
-    p2=y*(1.0-y/2)/(1.0-y+y**2/2)
-    factor=coupling**2/(x*y*Q2)*(1-y+y**2/2)
-    return factor*(p2*self.get_FX(2,x,z,Q2,pT,target,hadron))
-
-  def FUU(self,x,Q2,y,z,pT,target,hadron):
+# Structure function FUU in b space
+  def FUU_b(self,x,Q2,y,z,b,target,hadron):
     coupling=1.0/137
     factor=coupling**2/(x*y*Q2)*(1-y+y**2)
-    return factor*(self.get_FX(1,x,z,Q2,pT,target,hadron))
+    return factor*(self.get_FX(1,x,z,Q2,b,target,hadron))
 
 if __name__=='__main__':
 
