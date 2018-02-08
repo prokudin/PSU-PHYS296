@@ -179,6 +179,7 @@ class GK(CORE):
   def set_default_params(self):
     self.g2=0.1
     self.Q0=1.
+    self.bmax=1.
 
 #  def setup(self):
 

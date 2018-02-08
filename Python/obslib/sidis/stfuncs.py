@@ -12,7 +12,7 @@ from external.DSSLIB.DSS import DSS
 from qcdlib.tmdlib import PDF,PPDF,FF,GK
 from qcdlib.aux import AUX
 import matplotlib.pyplot as plt
-
+ 
 class STFUNCS:  # creating a class of 
 
   def __init__(self,conf):
@@ -57,12 +57,12 @@ class STFUNCS:  # creating a class of
 
   def get_wq_evolution(self,z,x,Q):
     wq=np.ones(len(self.e2))
-    #print  self.conf['gk'].g2
     return wq * 4*z**2 * self.conf['gk'].g2 * np.log( (z*Q)/(x*self.conf['gk'].Q0) )
 
   def get_gauss(self,z,pT,wq):
     return np.exp(-pT**2/wq)/(np.pi*wq)
 
+# Structure functions in pT space
   def get_FX(self,i,x,z,Q2,pT,target,hadron):
     k1=self.D[i]['k1']
     k2=self.D[i]['k2']
@@ -76,6 +76,36 @@ class STFUNCS:  # creating a class of
     K=self.get_K(i,x,Q2,z,pT,wq,k1,k2,target,hadron)
     return np.sum(self.e2*K*F*D*gauss)  #sums up the contributions
 
+# bstar
+  def bstar(self,b):
+    return b/np.sqrt(1+b**2/self.conf['gk'].bmax**2)
+
+# mub
+  def mub(self,b):
+    return 2*np.exp(-np.euler_gamma)/self.bstar(b)
+
+# gk function
+  def get_gk(self,b,z,x,Q):
+    wq=np.ones(len(self.e2))
+    return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (z*Q)/(x*self.conf['gk'].Q0) )
+
+# intrinsic widths
+  def get_width(self,b,z,k1,k2,target,hadron):
+    return np.abs(self.conf[k1].widths[target])/4 + np.abs(self.conf[k2].widths[hadron])/(4*z**2)
+      
+# Structure functions in b space
+  def get_FX_b(self,i,x,z,Q2,b,target,hadron):
+    k1=self.D[i]['k1']
+    k2=self.D[i]['k2']
+    if k1==None or k2==None: return 0
+    mu2=self.mub(b)**2
+    Q = np.sqrt(Q2)
+    F=self.conf[k1].get_C(x,mu2,target)
+    D=self.conf[k2].get_C(z,mu2,hadron)
+    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.get_gk(b,z,x,Q)
+    K=self.get_K(i,x,Q2,z,pT,wq,k1,k2,target,hadron)
+    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
+    
   def FLL(self,x,Q2,y,z,pT,target,hadron):
     coupling=1.0/137
     p2=y*(1.0-y/2)/(1.0-y+y**2/2)

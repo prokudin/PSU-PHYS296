@@ -47,6 +47,7 @@ conf['params']['ff']['widths0 k+ unfav']  = {'value':<<    1.8343038313949949769
 conf['params']['gk']={}
 conf['params']['gk']['g2']   = {'value':<<    2.42841198820627823807e-01>>,'fixed':False,'min':0,'max':10}
 conf['params']['gk']['Q0'] = {'value':<<    1.73881661600089509889e+00>>,'fixed':False,'min':1,'max':10}
+conf['params']['gk']['bmax'] = {'value':<<    1.e+00>>,'fixed':False,'min':0.01,'max':10}
 
 
 ############################################################################
