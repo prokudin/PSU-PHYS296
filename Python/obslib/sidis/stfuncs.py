@@ -58,6 +58,7 @@ class STFUNCS:  # creating a class of
   def get_wq_evolution(self,z,x,Q):
     wq=np.ones(len(self.e2))
     return wq * 4*z**2 * self.conf['gk'].g2 * np.log( (z*Q)/(x*self.conf['gk'].Q0) )
+#    return wq * 4*z**2 * self.conf['gk'].g2 * np.log( (Q)/(self.conf['gk'].Q0) )
 
   def get_gauss(self,z,pT,wq):
     return np.exp(-pT**2/wq)/(np.pi*wq)
@@ -115,7 +116,7 @@ class STFUNCS:  # creating a class of
     F=self.conf[k1].get_C(x,mu2,target)
     D=self.conf[k2].get_C(z,mu2,hadron)
     width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.get_gk(b,z,x,Q)
-    K=self.get_K(i,x,Q2,z,pT,wq,k1,k2,target,hadron)
+    K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
     return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
     
 # Structure function FUU in b space

@@ -57,8 +57,9 @@ class RESIDUALS(_RESIDUALS):
 
       FUU = self.stfuncs.get_FX(1,x,z,Q2,pT,'p',hadron)\
            +self.stfuncs.get_FX(1,x,z,Q2,pT,'n',hadron)
-      F2  = self.dis_stfuncs.get_F2(x,Q2,'p')\
-           +self.dis_stfuncs.get_F2(x,Q2,'n')
+      F2  = self.tabs[k]['F2'][i]
+#      F2  = self.dis_stfuncs.get_F2(x,Q2,'p')\
+#           +self.dis_stfuncs.get_F2(x,Q2,'n')
       thy = np.pi*FUU/F2
 
     elif obs=='ALL':

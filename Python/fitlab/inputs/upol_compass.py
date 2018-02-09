@@ -35,19 +35,19 @@ conf['path2DSS']='../external/DSSLIB'
 conf['params']={}
 
 conf['params']['pdf']={}
-conf['params']['pdf']['widths0 valence']  = {'value':<<    1.85022939951512699341e-01>>,'fixed':False,'min':0,'max':10}
-conf['params']['pdf']['widths0 sea']      = {'value':<<   -2.06919641490042154064e-02>>,'fixed':False,'min':0,'max':10}
+conf['params']['pdf']['widths0 valence']  = {'value':<<    1.45666546315805955913e+00>>,'fixed':False,'min':0,'max':10}
+conf['params']['pdf']['widths0 sea']      = {'value':<<    2.76858701662767847651e+00>>,'fixed':False,'min':0,'max':10}
 
 conf['params']['ff']={}
-conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    1.40404636352888190221e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    5.27724610452016795747e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    1.37256203256741982077e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    3.95197890342868840552e-01>>,'fixed':False,'min':0,'max':1}
 conf['params']['ff']['widths0 k+ fav']    = {'value':<<    1.33775551334897768729e-01>>,'fixed':False,'min':0,'max':1}
 conf['params']['ff']['widths0 k+ unfav']  = {'value':<<    1.83430383139499497691e-01>>,'fixed':False,'min':0,'max':1}
 
 conf['params']['gk']={}
-conf['params']['gk']['g2']   = {'value':<<    2.43251601797542210681e-01>>,'fixed':False,'min':0,'max':10}
-conf['params']['gk']['Q0'] = {'value':<<    1.74760021161387624211e+00>>,'fixed':False,'min':1,'max':10}
-conf['params']['gk']['bmax'] = {'value':<<    1.00000000000000000000e+00>>,'fixed':False,'min':0.01,'max':10}
+conf['params']['gk']['g2']   = {'value':<<    7.03349459675655097612e-02>>,'fixed':False,'min':0,'max':10}
+conf['params']['gk']['Q0'] = {'value':<<    1.00000000000000000000e+00>>,'fixed':True,'min':1,'max':10}
+conf['params']['gk']['bmax'] = {'value':<<    1.00000000000000000000e+00>>,'fixed':True,'min':0.01,'max':10}
 
 
 ############################################################################
@@ -65,7 +65,9 @@ conf['datasets']['sidis']['filters'][0]={}
 #conf['datasets']['sidis']['filters'][0]['idx']=[1000,1001,1004,1005,1002,1003,1006,1007]
 #conf['datasets']['sidis']['filters'][0]['idx']=[1000,1001,1004,1005,1002,1003,1006,1007,5001,5002]
 conf['datasets']['sidis']['filters'][0]['idx']=[5001,5002]
-conf['datasets']['sidis']['filters'][0]['filter']="z<0.6 and Q2>1.69 and pT>0.2 and pT<0.9 and (pT/z)**2<0.05*Q2"
+#conf['datasets']['sidis']['filters'][0]['filter']="z<0.6 and Q2>1.69 and pT>0.2 and pT<0.9"
+#conf['datasets']['sidis']['filters'][0]['filter']="z<0.6 and Q2>1.69 and pT>0.2 and pT<0.9 and (pT/z)**2<0.5*Q2 and yp-yh>2."
+conf['datasets']['sidis']['filters'][0]['filter']="z<0.9 and Q2>1.69 and (pT/z)**2<0.25*Q2 and yp-yh>2."
 
 conf['datasets']['sidis']['xlsx']={}
 
