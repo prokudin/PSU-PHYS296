@@ -8,7 +8,7 @@ from scipy.integrate import quad
 from external.PDF.CT10 import CT10
 from external.LSSLIB.LSS import LSS
 from external.DSSLIB.DSS import DSS
-from external.GRSVLIB.DSS import GRSV
+from external.GRSVLIB.GRSV import GRSV
 from aux import AUX
 from scipy.special import gamma
 

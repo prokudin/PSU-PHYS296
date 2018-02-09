@@ -36,8 +36,8 @@ conf['params']={}
 
 
 conf['params']['ppdf']={}
-conf['params']['ppdf']['widths0 valence']  = {'value':<<    1.09361479714813469855e-01>>,'fixed':False,'min':0,'max':10}
-conf['params']['ppdf']['widths0 sea']      = {'value':<<    2.18478703409406538327e+00>>,'fixed':False,'min':0,'max':10}
+conf['params']['ppdf']['widths0 valence']  = {'value':<<    1.09359720710645161312e-01>>,'fixed':False,'min':0,'max':10}
+conf['params']['ppdf']['widths0 sea']      = {'value':<<    2.18568688376294772979e+00>>,'fixed':False,'min':0,'max':10}
 
 
 conf['params']['pdf']={}

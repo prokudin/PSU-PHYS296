@@ -11,12 +11,12 @@ class GRSV:
     root=conf['path2GRSV']
     if root.endswith('/')==False: root+='/'
     fGRSV.root.root=root.ljust(255)
-    self.iset=1 # positive glue
+    self.iset=3 # LO standard
     self.storage={}
 
   def _get_f(self,x,Q2):
     """
-    out: g,u,ub,d,db,s,sb,c,cb,b,bb   U, D, UB, DB, ST, GL, G1P, G1N
+    out: U, D, UB, DB, ST, GL, G1P, G1N
     """
     a=np.array(fGRSV.parpol(self.iset,x,Q2))
     g=a[4]

@@ -35,19 +35,19 @@ conf['path2DSS']='../external/DSSLIB'
 conf['params']={}
 
 conf['params']['pdf']={}
-conf['params']['pdf']['widths0 valence']  = {'value':<<    1.84417793008498698271e-01>>,'fixed':False,'min':0,'max':10}
-conf['params']['pdf']['widths0 sea']      = {'value':<<    3.07841750816280068648e-02>>,'fixed':False,'min':0,'max':10}
+conf['params']['pdf']['widths0 valence']  = {'value':<<    1.85022939951512699341e-01>>,'fixed':False,'min':0,'max':10}
+conf['params']['pdf']['widths0 sea']      = {'value':<<   -2.06919641490042154064e-02>>,'fixed':False,'min':0,'max':10}
 
 conf['params']['ff']={}
-conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    1.40164525507112336378e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    5.26635885561056782400e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    1.40404636352888190221e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    5.27724610452016795747e-01>>,'fixed':False,'min':0,'max':1}
 conf['params']['ff']['widths0 k+ fav']    = {'value':<<    1.33775551334897768729e-01>>,'fixed':False,'min':0,'max':1}
 conf['params']['ff']['widths0 k+ unfav']  = {'value':<<    1.83430383139499497691e-01>>,'fixed':False,'min':0,'max':1}
 
 conf['params']['gk']={}
-conf['params']['gk']['g2']   = {'value':<<    2.42841198820627823807e-01>>,'fixed':False,'min':0,'max':10}
-conf['params']['gk']['Q0'] = {'value':<<    1.73881661600089509889e+00>>,'fixed':False,'min':1,'max':10}
-conf['params']['gk']['bmax'] = {'value':<<    1.e+00>>,'fixed':False,'min':0.01,'max':10}
+conf['params']['gk']['g2']   = {'value':<<    2.43251601797542210681e-01>>,'fixed':False,'min':0,'max':10}
+conf['params']['gk']['Q0'] = {'value':<<    1.74760021161387624211e+00>>,'fixed':False,'min':1,'max':10}
+conf['params']['gk']['bmax'] = {'value':<<    1.00000000000000000000e+00>>,'fixed':False,'min':0.01,'max':10}
 
 
 ############################################################################

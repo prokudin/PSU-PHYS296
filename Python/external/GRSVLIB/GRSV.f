@@ -86,6 +86,8 @@ Cf2py intent(out)  g1n
      4           0.1, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25, 0.275,
      5           0.3, 0.325, 0.35, 0.375, 0.4, 0.45,  0.5, 0.55,
      6           0.6, 0.65,  0.7,  0.75,  0.8, 0.85,  0.9, 1.0 /
+      character*255 root
+      common/root/root
 *...CHECK OF X AND Q2 VALUES : 
        IF ( (X.LT.1.0D-4) .OR. (X.GT.1.0D0) ) THEN
            WRITE(6,91) 
@@ -112,19 +114,19 @@ C          GOTO 60
       IF (IINI.NE.0) GOTO 16
       IF (ISET.EQ.1) THEN
        IIREAD=11       
-       OPEN(UNIT=11,FILE='grids/std2000_nlo_g1.grid',
+       OPEN(UNIT=11,FILE=trim(root)//'grids/std2000_nlo_g1.grid',
      >      STATUS='OLD')
       ELSE IF (ISET.EQ.2) THEN
        IIREAD=22
-       OPEN(UNIT=22,FILE='grids/val2000_nlo_g1.grid',
+       OPEN(UNIT=22,FILE=trim(root)//'grids/val2000_nlo_g1.grid',
      >      STATUS='OLD')
       ELSE IF (ISET.EQ.3) THEN
        IIREAD=33       
-       OPEN(UNIT=33,FILE='grids/std2000_lo_g1.grid',
+       OPEN(UNIT=33,FILE=trim(root)//'grids/std2000_lo_g1.grid',
      >      STATUS='OLD')
       ELSE IF (ISET.EQ.4) THEN
        IIREAD=44
-       OPEN(UNIT=44,FILE='grids/val2000_lo_g1.grid',
+       OPEN(UNIT=44,FILE=trim(root)//'grids/val2000_lo_g1.grid',
      >      STATUS='OLD')
       ELSE
         WRITE(6,93)
