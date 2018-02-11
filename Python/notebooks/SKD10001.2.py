@@ -60,3 +60,5 @@ gind = g2.index.values
 newg = h.iloc[gind]
 Data4plot = newg.sort_values(by=['x'])
 print(Data4plot)
+
+# Ive binned the qT2 and value data then restructed a new DataFrame for the rows qT2 and value data that both were within bin dimensions
