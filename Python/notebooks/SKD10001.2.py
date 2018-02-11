@@ -62,3 +62,9 @@ Data4plot = newg.sort_values(by=['x'])
 print(Data4plot)
 
 # Ive binned the qT2 and value data then restructed a new DataFrame for the rows qT2 and value data that both were within bin dimensions
+# Creating a new sorted DataFrame with new index values from 0 to length of Data4plot
+newx = Data4plot['x'].as_matrix(columns=None)
+newy = Data4plot['y'].as_matrix(columns=None)
+newx1 = Data4plot['x']
+newindex = np.arange(len(Data4plot))
+datplot = pd.DataFrame({'x' : newx,'y' : newy},index = newindex)
