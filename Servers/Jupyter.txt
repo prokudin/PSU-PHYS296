@@ -1,0 +1,12 @@
+step 1):   ssh -4 -XY -L localhost:8890:localhost:8890  avp5627@146.186.234.249
+CHANGE avp5627 to your USERNAME
+step 2): on the server:
+  jupyter-notebook --ip=127.0.0.1 --no-browser --port=8890  
+step3) look for this
+
+  Copy/paste this URL into your browser when you connect for the first time,
+   to login with a token:
+       http://127.0.0.1:8896/?token=e9085183f3a83e2be8febb007037f424ab65138aad8b9ea0
+
+
+then it should work
