@@ -3,7 +3,7 @@
 import sys,os
 import numpy as np
 import heapq
-import vegas
+#import vegas
 from scipy.special import jv, jn_zeros, yv
 from scipy.optimize import fsolve
 from scipy.integrate import quad
@@ -132,34 +132,34 @@ class Quad:
         quadreturn = quad(lambda bT: jv(nu,q*bT)*w(bT),0,np.inf, epsabs = 0.0, epsrel = eps)
         return 1/(2*np.pi)*quadreturn[0], 1/(2*np.pi)*quadreturn[1]
 
-class Vegas:
-
-    def transform(self, f, p):
-        return f(np.tan(p))*(1/np.cos(p))**2
-
-    def MCinv(self, f, q, nu, m):
-        integ = vegas.Integrator([[0, np.pi/2.0]])
-        result = integ(lambda p: 1/(2*np.pi)*self.transform(f, p)*jv(nu, q*np.tan(p)), nitn=10, neval=int(m))[0]
-        lst = str(result).replace('+-', '(').replace(')', '(').split('(')
-        num_zeros = 0
-        if str(lst[0][0]) == '-':
-            num_zeros = -1
-        if len(lst[1]) == 3:
-            integral = float(lst[0])
-            error = float(lst[1])
-        else:
-            num_zeros = num_zeros+len(lst[0])-4
-            lst[1] = '0.'+lst[1].zfill(num_zeros+2)
-            integral = float(lst[0])
-            error = float(lst[1])
-        return integral, error
+#class Vegas:
+#
+#    def transform(self, f, p):
+#        return f(np.tan(p))*(1/np.cos(p))**2
+#
+#    def MCinv(self, f, q, nu, m):
+#        integ = vegas.Integrator([[0, np.pi/2.0]])
+#        result = integ(lambda p: 1/(2*np.pi)*self.transform(f, p)*jv(nu, q*np.tan(p)), nitn=10, neval=int(m))[0]
+#        lst = str(result).replace('+-', '(').replace(')', '(').split('(')
+#        num_zeros = 0
+#        if str(lst[0][0]) == '-':
+#            num_zeros = -1
+#        if len(lst[1]) == 3:
+#            integral = float(lst[0])
+#            error = float(lst[1])
+#        else:
+#            num_zeros = num_zeros+len(lst[0])-4
+#            lst[1] = '0.'+lst[1].zfill(num_zeros+2)
+#            integral = float(lst[0])
+#            error = float(lst[1])
+#        return integral, error
 
 
 
 if __name__== "__main__":
     ogata = Ogata()
     adquad = Quad()
-    vegasmc = Vegas()
+#    vegasmc = Vegas()
     print ogata.adog(lambda x: x*np.exp(-x**2), 1.0, 0, 100, 0.5, 1.0)
     print adquad.quadinv(lambda x: x*np.exp(-x**2), 1.0, 0)
-    print vegasmc.MCinv(lambda x: x*np.exp(-x**2), 1.0, 0, 1000)
+#    print vegasmc.MCinv(lambda x: x*np.exp(-x**2), 1.0, 0, 1000)
