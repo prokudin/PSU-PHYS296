@@ -11,7 +11,9 @@ from external.LSSLIB.LSS import LSS
 from external.DSSLIB.DSS import DSS
 from qcdlib.tmdlib import PDF,PPDF,FF,GK
 from qcdlib.aux import AUX
-import matplotlib.pyplot as plt
+import pylab as py
+#import matplotlib.pyplot as plt
+from tools.hankel.inverters import Ogata, Quad
  
 class STFUNCS:  # creating a class of 
 
@@ -44,7 +46,8 @@ class STFUNCS:  # creating a class of
     self.D={}   #creat a dictionalary
     self.D[1] ={'k1':'pdf','k2':'ff'}
     self.D[2] ={'k1':'ppdf','k2':'ff'}
-
+    self.ogata = Ogata()
+    self.quad = Quad()
 
   def get_K(self,i,x,Q2,z,pT,wq,k1,k2,target,hadron):
     if   i==1: return x
@@ -125,46 +128,108 @@ class STFUNCS:  # creating a class of
     factor=coupling**2/(x*y*Q2)*(1-y+y**2)
     return factor*(self.get_FX(1,x,z,Q2,b,target,hadron))
 
-if __name__=='__main__':
+  def FUU_q(self,x,Q2,y,z,q,target,hadron,bmin,bmax,Nmax = 10):
+    nu = 0
+    w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,b,target,hadron))
+    return self.ogata.adog(w, q, nu, Nmax, bmin, bmax, lib = None)
 
-  conf={}
+  def FUU_q_quad(self,x,Q2,y,z,q,target,hadron,eps = 1e-3):
+    nu = 0
+    w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,b,target,hadron))
+    return self.quad.quadinv(w, q, nu, eps)
+
+#if __name__=='__main__':
+#
+#  conf={}
+##  conf['path2CJ'] ='../../external/CJLIB'
+#  conf['path2CT10'] ='../../external/PDF'
+#  conf['path2LSS']='../../external/LSSLIB'
+#  conf['path2DSS']='../../external/DSSLIB'
+#
+#  conf['order']='LO'
+#  conf['aux']  =AUX()
+##  conf['_pdf'] =CJ(conf)
+#  conf['_pdf'] =CT10(conf)
+#  conf['_ppdf']=LSS(conf)
+#  conf['_ff']  =DSS(conf)
+#
+#  conf['pdf']=PDF(conf)
+#  conf['ppdf']=PPDF(conf)
+#  conf['ff']=FF(conf)
+#  conf['gk']=GK(conf)
+#
+#
+#  stfuncs=STFUNCS(conf)
+#  x=0.25
+#  z=0.5
+#  Q2=2.4
+#  mu2=2.0
+#  E=11.0
+#  m=0.938
+#  pT=0.3
+#  y=Q2/(2*m*E*x)
+#  target='p'
+#  hadron='pi+' 
+#  for i in range(1,2): print i,stfuncs.get_FX(i,x,z,Q2,pT,target,hadron)
+#  print stfuncs.FLL(x,Q2,y,z,pT,target,hadron)
+#  print stfuncs.FUU(x,Q2,y,z,pT,target,hadron)
+#  for j in range(1,36): plt.plot([j/37.] , [stfuncs.FLL(j/37.,Q2,y,z,pT,target,hadron)], 'ro')
+#
+#  plt.xlabel('x')
+#  plt.ylabel('FLL')
+#  plt.title('FLL strucrure function at  $Q^2=3.6$')
+#
+#  plt.show()
+
+
+conf={}
 #  conf['path2CJ'] ='../../external/CJLIB'
-  conf['path2CT10'] ='../../external/PDF'
-  conf['path2LSS']='../../external/LSSLIB'
-  conf['path2DSS']='../../external/DSSLIB'
+conf['path2CT10'] ='../../external/PDF'
+conf['path2LSS']='../../external/LSSLIB'
+conf['path2DSS']='../../external/DSSLIB'
 
-  conf['order']='LO'
-  conf['aux']  =AUX()
+conf['order']='LO'
+conf['aux']  =AUX()
 #  conf['_pdf'] =CJ(conf)
-  conf['_pdf'] =CT10(conf)
-  conf['_ppdf']=LSS(conf)
-  conf['_ff']  =DSS(conf)
+conf['_pdf'] =CT10(conf)
+conf['_ppdf']=LSS(conf)
+conf['_ff']  =DSS(conf)
 
-  conf['pdf']=PDF(conf)
-  conf['ppdf']=PPDF(conf)
-  conf['ff']=FF(conf)
-  conf['gk']=GK(conf)
+conf['pdf']=PDF(conf)
+conf['ppdf']=PPDF(conf)
+conf['ff']=FF(conf)
+conf['gk']=GK(conf)
 
+stfuncs=STFUNCS(conf)
+x=0.25
+z=0.5
+Q2=2.4
+mu2=2.0
+E=11.0
+m=0.938
+y=Q2/(2*m*E*x)
+target='p'
+hadron='pi+' 
 
-  stfuncs=STFUNCS(conf)
-  x=0.25
-  z=0.5
-  Q2=2.4
-  mu2=2.0
-  E=11.0
-  m=0.938
-  pT=0.3
-  y=Q2/(2*m*E*x)
-  target='p'
-  hadron='pi+' 
-  for i in range(1,2): print i,stfuncs.get_FX(i,x,z,Q2,pT,target,hadron)
-  print stfuncs.FLL(x,Q2,y,z,pT,target,hadron)
-  print stfuncs.FUU(x,Q2,y,z,pT,target,hadron)
-  for j in range(1,36): plt.plot([j/37.] , [stfuncs.FLL(j/37.,Q2,y,z,pT,target,hadron)], 'ro')
+bT = np.logspace(-3, 3, 60)
+FUUbT = [b*stfuncs.FUU_b(x,Q2,y,z,b,target,hadron) for b in bT]
 
-  plt.xlabel('x')
-  plt.ylabel('FLL')
-  plt.title('FLL strucrure function at  $Q^2=3.6$')
+qT = np.linspace(0.01, Q2, 30)
+FUUqT = [stfuncs.FUU_q(x,Q2,y,z,q,target,hadron,0.3,0.5,Nmax = 20) for q in qT]
+FUUquad = [stfuncs.FUU_q_quad(x,Q2,y,z,q,target,hadron) for q in qT]
 
-  plt.show()
-  
+ax = py.subplot(121)
+ax.plot(bT, FUUbT)
+ax.set_xlabel('b (1/GeV)', fontsize=10)
+ax.set_ylabel('FUU(b, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
+ax.semilogx()
+
+ax = py.subplot(122)
+ax.errorbar(qT, FUUqT, [0]*len(qT),label = 'Ogata')
+ax.errorbar(qT, [FUUquad[i][0] for i in range(len(qT))], [FUUquad[i][1] for i in range(len(qT))], label = 'Quad')
+ax.set_xlabel('q (GeV)', fontsize=10)
+ax.set_ylabel('FUU(q, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
+#ax.semilogx()
+py.tight_layout()
+ax.legend()
+py.show()
