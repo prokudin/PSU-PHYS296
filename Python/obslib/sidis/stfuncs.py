@@ -181,63 +181,56 @@ class STFUNCS:  # creating a class of
 #
 #  plt.show()
 
-
-conf={}
-cwd = os.getcwd()
-#  conf['path2CJ'] ='../../external/CJLIB'
-if 'sidis' in cwd:
+if __name__=='__main__':
+    conf={}
+    cwd = os.getcwd()
+    #  conf['path2CJ'] ='../../external/CJLIB'
     conf['path2CT10'] ='../../external/PDF'
     conf['path2LSS']='../../external/LSSLIB'
     conf['path2DSS']='../../external/DSSLIB'
-elif 'fitlab' in cwd:
-    conf['path2CT10'] ='../external/PDF'
-    conf['path2LSS']='../external/LSSLIB'
-    conf['path2DSS']='../external/DSSLIB'
-else:
-    print 'Please update path2CT10, path2LSS, path2DSS' 
-
-conf['order']='LO'
-conf['aux']  =AUX()
-#  conf['_pdf'] =CJ(conf)
-conf['_pdf'] =CT10(conf)
-conf['_ppdf']=LSS(conf)
-conf['_ff']  =DSS(conf)
-
-conf['pdf']=PDF(conf)
-conf['ppdf']=PPDF(conf)
-conf['ff']=FF(conf)
-conf['gk']=GK(conf)
-
-stfuncs=STFUNCS(conf)
-x=0.25
-z=0.5
-Q2=2.4
-mu2=2.0
-E=11.0
-m=0.938
-y=Q2/(2*m*E*x)
-target='p'
-hadron='pi+' 
-
-bT = np.logspace(-3, 3, 60)
-FUUbT = [b*stfuncs.FUU_b(x,Q2,y,z,b,target,hadron) for b in bT]
-
-qT = np.linspace(0.01, Q2, 30)
-FUUqT = [stfuncs.FUU_q(x,Q2,y,z,q,target,hadron,0.3,0.5,Nmax = 20) for q in qT]
-FUUquad = [stfuncs.FUU_q_quad(x,Q2,y,z,q,target,hadron) for q in qT]
-
-ax = py.subplot(121)
-ax.plot(bT, FUUbT)
-ax.set_xlabel('b (1/GeV)', fontsize=10)
-ax.set_ylabel('FUU(b, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
-ax.semilogx()
-
-ax = py.subplot(122)
-ax.errorbar(qT, FUUqT, [0]*len(qT),label = 'Ogata')
-ax.errorbar(qT, [FUUquad[i][0] for i in range(len(qT))], [FUUquad[i][1] for i in range(len(qT))], label = 'Quad')
-ax.set_xlabel('q (GeV)', fontsize=10)
-ax.set_ylabel('FUU(q, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
-#ax.semilogx()
-py.tight_layout()
-ax.legend()
-py.show()
+    
+    conf['order']='LO'
+    conf['aux']  =AUX()
+    #  conf['_pdf'] =CJ(conf)
+    conf['_pdf'] =CT10(conf)
+    conf['_ppdf']=LSS(conf)
+    conf['_ff']  =DSS(conf)
+    
+    conf['pdf']=PDF(conf)
+    conf['ppdf']=PPDF(conf)
+    conf['ff']=FF(conf)
+    conf['gk']=GK(conf)
+    
+    stfuncs=STFUNCS(conf)
+    x=0.25
+    z=0.5
+    Q2=2.4
+    mu2=2.0
+    E=11.0
+    m=0.938
+    y=Q2/(2*m*E*x)
+    target='p'
+    hadron='pi+' 
+    
+    bT = np.logspace(-3, 3, 60)
+    FUUbT = [b*stfuncs.FUU_b(x,Q2,y,z,b,target,hadron) for b in bT]
+    
+    qT = np.linspace(0.01, Q2, 30)
+    FUUqT = [stfuncs.FUU_q(x,Q2,y,z,q,target,hadron,0.3,0.5,Nmax = 20) for q in qT]
+    FUUquad = [stfuncs.FUU_q_quad(x,Q2,y,z,q,target,hadron) for q in qT]
+    
+    ax = py.subplot(121)
+    ax.plot(bT, FUUbT)
+    ax.set_xlabel('b (1/GeV)', fontsize=10)
+    ax.set_ylabel('FUU(b, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
+    ax.semilogx()
+    
+    ax = py.subplot(122)
+    ax.errorbar(qT, FUUqT, [0]*len(qT),label = 'Ogata')
+    ax.errorbar(qT, [FUUquad[i][0] for i in range(len(qT))], [FUUquad[i][1] for i in range(len(qT))], label = 'Quad')
+    ax.set_xlabel('q (GeV)', fontsize=10)
+    ax.set_ylabel('FUU(q, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
+    #ax.semilogx()
+    py.tight_layout()
+    ax.legend()
+    py.show()
