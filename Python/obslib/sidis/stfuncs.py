@@ -183,10 +183,18 @@ class STFUNCS:  # creating a class of
 
 
 conf={}
+cwd = os.getcwd()
 #  conf['path2CJ'] ='../../external/CJLIB'
-conf['path2CT10'] ='../../external/PDF'
-conf['path2LSS']='../../external/LSSLIB'
-conf['path2DSS']='../../external/DSSLIB'
+if 'sidis' in cwd:
+    conf['path2CT10'] ='../../external/PDF'
+    conf['path2LSS']='../../external/LSSLIB'
+    conf['path2DSS']='../../external/DSSLIB'
+elif 'fitlab' in cwd:
+    conf['path2CT10'] ='../external/PDF'
+    conf['path2LSS']='../external/LSSLIB'
+    conf['path2DSS']='../external/DSSLIB'
+else:
+    print 'Please update path2CT10, path2LSS, path2DSS' 
 
 conf['order']='LO'
 conf['aux']  =AUX()
