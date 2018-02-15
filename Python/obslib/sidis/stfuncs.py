@@ -117,8 +117,8 @@ class STFUNCS:  # creating a class of
 #    mu2=self.mub(b)**2
     mu2=Q2
     Q = np.sqrt(Q2)
-    F=self.conf[k1].get_C(x,mu2,target)
-    D=self.conf[k2].get_C(z,mu2,hadron)
+    F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
+    D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
 #    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.get_gk(b,z,x,Q)
     width=self.get_width(b,z,k1,k2,target,hadron)*b**2
     K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
@@ -215,9 +215,9 @@ if __name__=='__main__':
     hadron='pi+' 
     
     bT = np.logspace(-3, 3, 60)
+    qT = np.linspace(0.01, Q2, 30)
     FUUbT = [b*stfuncs.FUU_b(x,Q2,y,z,b,target,hadron) for b in bT]
     
-    qT = np.linspace(0.01, Q2, 30)
     FUUqT = [stfuncs.FUU_q(x,Q2,y,z,q,target,hadron,0.3,0.5,Nmax = 20) for q in qT]
     FUUquad = [stfuncs.FUU_q_quad(x,Q2,y,z,q,target,hadron) for q in qT]
     
