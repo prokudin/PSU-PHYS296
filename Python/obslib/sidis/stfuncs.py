@@ -126,15 +126,16 @@ class STFUNCS:  # creating a class of
     
 # Structure function FUU in b space
   def FUU_b(self,x,Q2,y,z,q,b,target,hadron):
-    coupling=1.0/137
+    #coupling=1.0/137
     #factor=coupling**2/(x*y*Q2)*(1-y+y**2)
     factor = 1.0
     return factor*(self.get_FX_b(1,x,z,Q2,q,b,target,hadron))
 
-  def FUU_q(self,x,Q2,y,z,q,target,hadron,bmin,bmax,Nmax = 10):
+  def FUU_q(self,x,Q2,y,z,q,target,hadron,Nmax = 20):
     nu = 0
+    Q = np.sqrt(Q2)
     w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,q,b,target,hadron))
-    return self.ogata.adog(w, q, nu, Nmax, bmin, bmax, lib = None)
+    return 2*np.pi*self.ogata.adog2(w, q, nu, Nmax, Q, lib = None)
 
   def FUU_q_quad(self,x,Q2,y,z,q,target,hadron,eps = 1e-3):
     nu = 0
@@ -218,18 +219,21 @@ if __name__=='__main__':
     
     pT = np.linspace(0.01, z*np.sqrt(Q2), 30)
     FUUquad = [stfuncs.FUU_q_quad(x,Q2,y,z,p/z,target,hadron) for p in pT]
+    FUUOgata = [stfuncs.FUU_q(x,Q2,y,z,p/z,target,hadron,Nmax = 20) for p in pT]
     FUUgauss = [stfuncs.get_FX(1,x,z,Q2,p,target,hadron) for p in pT]
     
     ax = py.subplot(121)
     ax.plot(pT, FUUgauss, label = 'Analytic')
     ax.errorbar(pT, [FUUquad[i][0] for i in range(len(pT))], [FUUquad[i][1] for i in range(len(pT))], label = 'Quad')
+    ax.errorbar(pT, FUUOgata, [0]*len(pT), label = 'Ogata')
     ax.set_xlabel('p_T (GeV)', fontsize=10)
     ax.set_ylabel('FUU(q, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
     ax.semilogy()
     ax.legend()
     
     ax = py.subplot(122)
-    ax.errorbar(pT, [FUUquad[i][0]/FUUgauss[i] for i in range(len(pT))], [FUUquad[i][1]/FUUgauss[i] for i in range(len(pT))], label = 'Analytic/Quad')
+    ax.errorbar(pT, [FUUquad[i][0]/FUUgauss[i] for i in range(len(pT))], [FUUquad[i][1]/FUUgauss[i] for i in range(len(pT))], label = 'Quad/Analytic')
+    ax.errorbar(pT, [FUUOgata[i]/FUUgauss[i] for i in range(len(pT))], [0]*len(pT), label = 'Ogata/Analytic')
     ax.set_xlabel('p_T (GeV)', fontsize=10)
     ax.set_ylabel('FUU ratio (q, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
     

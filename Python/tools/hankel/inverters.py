@@ -126,6 +126,24 @@ class Ogata:
                 return _lib[str(bminlast)+','+str(bmaxlast)]
         else:
             print('itmax reached')
+    def adog2(self, w, qT, nu, Nmax, Q, itmax=100, ib = 1, it = 1, bpeak = [], lib = None, bminlast = 0, bmaxlast = 0):
+        if lib is None:
+            lib = {}
+        if ib+it< itmax:
+            _lib = lib
+            bc = 1/Q
+            bmin, bmax, bmin1, bmax1, bmin2, bmax2, bmin3, bmax3 = self.get_b_vals(bc, ib, it)
+            h2, N2 = self.get_ogata_params_b(w, bmin2, bmax2, qT, nu)
+            if N2<Nmax:
+                _bool, __lib = self.compare(w, bmin, bmax, bmin1, bmax1, bmin2, bmax2, bmin3, bmax3, qT, nu, _lib)
+                if _bool == True:
+                    return self.adog2(w, qT, nu, Nmax, Q, itmax = 100, ib = ib+0, it = it+1, bpeak = [bc], lib = __lib, bminlast = bmin3, bmaxlast = bmax3)
+                else:
+                    return self.adog2(w, qT, nu, Nmax, Q, itmax = 100, ib = ib+1, it = it+0, bpeak = [bc], lib = __lib, bminlast = bmin3, bmaxlast = bmax3)
+            else:
+                return _lib[str(bminlast)+','+str(bmaxlast)]
+        else:
+            print('itmax reached')
 class Quad:
 
     def quadinv(self, w, q, nu, eps):
