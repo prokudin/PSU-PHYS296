@@ -132,13 +132,14 @@ class STFUNCS:  # creating a class of
 
   def FUU_q(self,x,Q2,y,z,q,target,hadron,bmin,bmax,Nmax = 10):
     nu = 0
-    w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,b,target,hadron))
+    w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,q,b,target,hadron))
     return self.ogata.adog(w, q, nu, Nmax, bmin, bmax, lib = None)
 
   def FUU_q_quad(self,x,Q2,y,z,q,target,hadron,eps = 1e-3):
     nu = 0
     w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,q,b,target,hadron))
-    return self.quad.quadinv(w, q, nu, eps)
+    inv = self.quad.quadinv(w, q, nu, eps)
+    return 2*np.pi*inv[0], 2*np.pi*inv[1]
 
 #if __name__=='__main__':
 #
@@ -214,25 +215,23 @@ if __name__=='__main__':
     target='p'
     hadron='pi+' 
     
-    bT = np.logspace(-3, 3, 60)
-    qT = np.linspace(0.01, Q2, 30)
-    FUUbT = [b*stfuncs.FUU_b(x,Q2,y,z,b,target,hadron) for b in bT]
-    
-    FUUqT = [stfuncs.FUU_q(x,Q2,y,z,q,target,hadron,0.3,0.5,Nmax = 20) for q in qT]
-    FUUquad = [stfuncs.FUU_q_quad(x,Q2,y,z,q,target,hadron) for q in qT]
+    pT = np.linspace(0.01, z*np.sqrt(Q2), 30)
+    FUUquad = [stfuncs.FUU_q_quad(x,Q2,y,z,p/z,target,hadron) for p in pT]
+    FUUgauss = [stfuncs.get_FX(1,x,z,Q2,p,target,hadron) for p in pT]
     
     ax = py.subplot(121)
-    ax.plot(bT, FUUbT)
-    ax.set_xlabel('b (1/GeV)', fontsize=10)
-    ax.set_ylabel('FUU(b, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
-    ax.semilogx()
+    ax.plot(pT, FUUgauss, label = 'Analytic')
+    ax.errorbar(pT, [FUUquad[i][0] for i in range(len(pT))], [FUUquad[i][1] for i in range(len(pT))], label = 'Quad')
+    ax.set_xlabel('p_T (GeV)', fontsize=10)
+    ax.set_ylabel('FUU(q, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
+    ax.semilogy()
+    ax.legend()
     
     ax = py.subplot(122)
-    ax.errorbar(qT, FUUqT, [0]*len(qT),label = 'Ogata')
-    ax.errorbar(qT, [FUUquad[i][0] for i in range(len(qT))], [FUUquad[i][1] for i in range(len(qT))], label = 'Quad')
-    ax.set_xlabel('q (GeV)', fontsize=10)
-    ax.set_ylabel('FUU(q, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
-    #ax.semilogx()
+    ax.errorbar(pT, [FUUquad[i][0]/FUUgauss[i] for i in range(len(pT))], [FUUquad[i][1]/FUUgauss[i] for i in range(len(pT))], label = 'Analytic/Quad')
+    ax.set_xlabel('p_T (GeV)', fontsize=10)
+    ax.set_ylabel('FUU ratio (q, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
+    
     py.tight_layout()
     ax.legend()
     py.show()
