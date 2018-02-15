@@ -75,7 +75,7 @@ class STFUNCS:  # creating a class of
     Q = np.sqrt(Q2)
     F=self.conf[k1].get_C(x,mu2,target)
     D=self.conf[k2].get_C(z,mu2,hadron)
-    wq=self.get_wq(z,k1,k2,target,hadron)  +  self.get_wq_evolution(z,x,Q)
+    wq=self.get_wq(z,k1,k2,target,hadron)  #+  self.get_wq_evolution(z,x,Q)
     gauss=self.get_gauss(z,pT,wq) 
     K=self.get_K(i,x,Q2,z,pT,wq,k1,k2,target,hadron)
     return np.sum(self.e2*K*F*D*gauss)  #sums up the contributions
@@ -127,7 +127,8 @@ class STFUNCS:  # creating a class of
 # Structure function FUU in b space
   def FUU_b(self,x,Q2,y,z,q,b,target,hadron):
     coupling=1.0/137
-    factor=coupling**2/(x*y*Q2)*(1-y+y**2)
+    #factor=coupling**2/(x*y*Q2)*(1-y+y**2)
+    factor = 1.0
     return factor*(self.get_FX_b(1,x,z,Q2,q,b,target,hadron))
 
   def FUU_q(self,x,Q2,y,z,q,target,hadron,bmin,bmax,Nmax = 10):
