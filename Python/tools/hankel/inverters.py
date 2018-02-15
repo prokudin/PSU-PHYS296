@@ -147,7 +147,7 @@ class Ogata:
 class Quad:
 
     def quadinv(self, w, q, nu, eps):
-        quadreturn = quad(lambda bT: jv(nu,q*bT)*w(bT),0,np.inf, epsabs = 0.0, epsrel = eps)
+        quadreturn = quad(lambda bT: jv(nu,q*bT)*w(bT),0.0,2.0, epsabs = 0.0, epsrel = eps)
         return 1/(2*np.pi)*quadreturn[0], 1/(2*np.pi)*quadreturn[1]
 
 #class Vegas:
