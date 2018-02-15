@@ -110,7 +110,7 @@ class STFUNCS:  # creating a class of
     return np.abs(self.conf[k1].widths[target])/4 + np.abs(self.conf[k2].widths[hadron])/(4*z**2)
       
 # Structure functions in b space
-  def get_FX_b(self,i,x,z,Q2,b,target,hadron):
+  def get_FX_b(self,i,x,z,Q2,pT,b,target,hadron):
     k1=self.D[i]['k1']
     k2=self.D[i]['k2']
     if k1==None or k2==None: return 0
@@ -123,10 +123,10 @@ class STFUNCS:  # creating a class of
     return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
     
 # Structure function FUU in b space
-  def FUU_b(self,x,Q2,y,z,b,target,hadron):
+  def FUU_b(self,x,Q2,y,z,q,b,target,hadron):
     coupling=1.0/137
     factor=coupling**2/(x*y*Q2)*(1-y+y**2)
-    return factor*(self.get_FX(1,x,z,Q2,b,target,hadron))
+    return factor*(self.get_FX_b(1,x,z,Q2,q,b,target,hadron))
 
   def FUU_q(self,x,Q2,y,z,q,target,hadron,bmin,bmax,Nmax = 10):
     nu = 0
@@ -135,7 +135,7 @@ class STFUNCS:  # creating a class of
 
   def FUU_q_quad(self,x,Q2,y,z,q,target,hadron,eps = 1e-3):
     nu = 0
-    w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,b,target,hadron))
+    w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,q,b,target,hadron))
     return self.quad.quadinv(w, q, nu, eps)
 
 #if __name__=='__main__':

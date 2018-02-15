@@ -66,7 +66,6 @@ class RESIDUALS(_RESIDUALS):
 #      F2  = self.dis_stfuncs.get_F2(x,Q2,'p')\
 #           +self.dis_stfuncs.get_F2(x,Q2,'n')
       thy = np.pi*FUU/F2
-
     elif obs=='ALL':
 
       factor = 1  
