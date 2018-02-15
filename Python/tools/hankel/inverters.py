@@ -6,7 +6,7 @@ import heapq
 #import vegas
 from scipy.special import jv, jn_zeros, yv
 from scipy.optimize import fsolve
-from scipy.integrate import quad
+from scipy.integrate import quad, fixed_quad
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -147,8 +147,14 @@ class Ogata:
 class Quad:
 
     def quadinv(self, w, q, nu, eps):
-        quadreturn = quad(lambda bT: jv(nu,q*bT)*w(bT),0.0,2.0, epsabs = 0.0, epsrel = eps)
+        quadreturn = quad(lambda bT: jv(nu,q*bT)*w(bT),0.0,5.0, epsabs = 0.0, epsrel = eps)
         return 1/(2*np.pi)*quadreturn[0], 1/(2*np.pi)*quadreturn[1]
+
+class Fix_Quad:
+
+    def fix_quadinv(self, w, q, nu, num):
+        quadreturn = fixed_quad(lambda bT: jv(nu,q*bT)*w(bT),0.0,4.0, n = num)
+        return 1/(2*np.pi)*quadreturn[0]#, 1/(2*np.pi)*quadreturn[1]
 
 #class Vegas:
 #

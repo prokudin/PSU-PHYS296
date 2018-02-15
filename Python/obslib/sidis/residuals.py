@@ -59,13 +59,17 @@ class RESIDUALS(_RESIDUALS):
      # FUU = self.stfuncs.get_FX(1,x,z,Q2,pT,'p',hadron)\
      #      +self.stfuncs.get_FX(1,x,z,Q2,pT,'n',hadron)
 
+# with Fixed Quad method
+      FUU = self.stfuncs.FUU_q_fquad(x,Q2,y,z,pT/z,'p',hadron, 10)\
+           +self.stfuncs.FUU_q_fquad(x,Q2,y,z,pT/z,'n',hadron, 10)
+
 # with Quad method
-      FUU = self.stfuncs.FUU_q_quad(x,Q2,y,z,pT/z,'p',hadron)[0]\
-           +self.stfuncs.FUU_q_quad(x,Q2,y,z,pT/z,'n',hadron)[0]
+     # FUU = self.stfuncs.FUU_q_quad(x,Q2,y,z,pT/z,'p',hadron)[0]\
+     #      +self.stfuncs.FUU_q_quad(x,Q2,y,z,pT/z,'n',hadron)[0]
 
 # Ogata Method
-     # FUU =self.stfuncs.FUU_q(x,Q2,y,z,pT/z,'p',hadron, Nmax = 20)\
-     #      +self.stfuncs.FUU_q(x,Q2,y,z,pT/z,'n',hadron, Nmax = 20)
+     # FUU =self.stfuncs.FUU_q(x,Q2,y,z,pT/z,'p',hadron, Nmax = 10)\
+     #      +self.stfuncs.FUU_q(x,Q2,y,z,pT/z,'n',hadron, Nmax = 10)
 
       F2  = self.tabs[k]['F2'][i]
 #      F2  = self.dis_stfuncs.get_F2(x,Q2,'p')\
