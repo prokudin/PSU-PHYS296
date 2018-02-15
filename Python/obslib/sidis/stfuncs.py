@@ -114,11 +114,13 @@ class STFUNCS:  # creating a class of
     k1=self.D[i]['k1']
     k2=self.D[i]['k2']
     if k1==None or k2==None: return 0
-    mu2=self.mub(b)**2
+#    mu2=self.mub(b)**2
+    mu2=Q2
     Q = np.sqrt(Q2)
     F=self.conf[k1].get_C(x,mu2,target)
     D=self.conf[k2].get_C(z,mu2,hadron)
-    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.get_gk(b,z,x,Q)
+#    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.get_gk(b,z,x,Q)
+    width=self.get_width(b,z,k1,k2,target,hadron)*b**2
     K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
     return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
     

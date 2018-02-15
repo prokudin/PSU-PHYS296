@@ -62,6 +62,7 @@ class RESIDUALS(_RESIDUALS):
 # with Quad method
       FUU = self.stfuncs.FUU_q_quad(x,Q2,y,z,pT/z,'p',hadron)[0]\
            +self.stfuncs.FUU_q_quad(x,Q2,y,z,pT/z,'n',hadron)[0]
+
       F2  = self.tabs[k]['F2'][i]
 #      F2  = self.dis_stfuncs.get_F2(x,Q2,'p')\
 #           +self.dis_stfuncs.get_F2(x,Q2,'n')
