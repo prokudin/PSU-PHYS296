@@ -115,20 +115,18 @@ class STFUNCS:  # creating a class of
     k1=self.D[i]['k1']
     k2=self.D[i]['k2']
     if k1==None or k2==None: return 0
-#    mu2=self.mub(b)**2
+    mu2=self.mub(b)**2
     mu2=Q2
     Q = np.sqrt(Q2)
     F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
     D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
-#    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.get_gk(b,z,x,Q)
-    width=self.get_width(b,z,k1,k2,target,hadron)*b**2
+    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.get_gk(b,z,x,Q)
+#    width=self.get_width(b,z,k1,k2,target,hadron)*b**2
     K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
     return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
     
 # Structure function FUU in b space
   def FUU_b(self,x,Q2,y,z,q,b,target,hadron):
-    #coupling=1.0/137
-    #factor=coupling**2/(x*y*Q2)*(1-y+y**2)
     factor = 1.0
     return factor*(self.get_FX_b(1,x,z,Q2,q,b,target,hadron))
 

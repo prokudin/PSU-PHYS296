@@ -55,7 +55,7 @@ class RESIDUALS(_RESIDUALS):
 
     elif obs=='M_Compass' and target=='deuteron': 
 
-#analytical methos        
+#analytical method        
      # FUU = self.stfuncs.get_FX(1,x,z,Q2,pT,'p',hadron)\
      #      +self.stfuncs.get_FX(1,x,z,Q2,pT,'n',hadron)
 
