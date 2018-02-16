@@ -76,7 +76,7 @@ class STFUNCS:  # creating a class of
     Q = np.sqrt(Q2)
     F=self.conf[k1].get_C(x,mu2,target)
     D=self.conf[k2].get_C(z,mu2,hadron)
-    wq=self.get_wq(z,k1,k2,target,hadron)  #+  self.get_wq_evolution(z,x,Q)
+    wq=self.get_wq(z,k1,k2,target,hadron)  +  self.get_wq_evolution(z,x,Q)
     gauss=self.get_gauss(z,pT,wq) 
     K=self.get_K(i,x,Q2,z,pT,wq,k1,k2,target,hadron)
     return np.sum(self.e2*K*F*D*gauss)  #sums up the contributions
@@ -105,6 +105,7 @@ class STFUNCS:  # creating a class of
   def get_gk(self,b,z,x,Q):
     wq=np.ones(len(self.e2))
     return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (z*Q)/(x*self.conf['gk'].Q0) )
+#    return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (Q)/(self.conf['gk'].Q0) )
 
 # intrinsic widths
   def get_width(self,b,z,k1,k2,target,hadron):
@@ -115,7 +116,7 @@ class STFUNCS:  # creating a class of
     k1=self.D[i]['k1']
     k2=self.D[i]['k2']
     if k1==None or k2==None: return 0
-    mu2=self.mub(b)**2
+    #mu2=self.mub(b)**2
     mu2=Q2
     Q = np.sqrt(Q2)
     F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
