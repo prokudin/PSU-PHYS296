@@ -15,7 +15,8 @@
 | 2002  | [link][?]    | proton   | pi0    | ALL        | clas       | PT         |
 | 2003  | [link][?]    | proton   | h+     | ALL        | compass    | x          |
 | 2004  | [link][?]    | proton   | h-     | ALL        | compass    | x          |
-
+| 5001  | [link][?]    | deuteron | pi+    | M_Compass  | compass    | x          |
+| 5002  | [link][?]    | deuteron | pi-    | M_Compass  | compass    | x          |
 
 
 
