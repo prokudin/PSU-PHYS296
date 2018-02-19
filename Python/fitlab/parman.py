@@ -107,6 +107,7 @@ class PARMAN:
   def set_gk_params(self):
     self.conf['gk'].Q0=self.conf['params']['gk']['Q0']['value']
     self.conf['gk'].g2=self.conf['params']['gk']['g2']['value']
+    self.conf['gk'].bmax=self.conf['params']['gk']['bmax']['value']
   
 
 
