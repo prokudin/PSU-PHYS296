@@ -95,7 +95,7 @@ class STFUNCS:  # creating a class of
     
 # bstar
   def bstar(self,b):
-    return b/np.sqrt(1+b**2/self.conf['gk'].bmax**2)
+    return b/np.sqrt(1+b**2/(self.conf['gk'].bmax)**2)
 
 # mub
   def mub(self,b):
