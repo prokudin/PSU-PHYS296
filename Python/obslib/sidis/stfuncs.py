@@ -92,6 +92,9 @@ class STFUNCS:  # creating a class of
     factor=coupling**2/(x*y*Q2)*(1-y+y**2)
     return factor*(self.get_FX(1,x,z,Q2,pT,target,hadron))
 
+# bc
+  def bc(self,b):
+    return np.sqrt(b**2+(self.conf['gk'].bmin)**2)
     
 # bstar
   def bstar(self,b):
@@ -116,8 +119,8 @@ class STFUNCS:  # creating a class of
     k1=self.D[i]['k1']
     k2=self.D[i]['k2']
     if k1==None or k2==None: return 0
-    #mu2=self.mub(b)**2
-    mu2=Q2
+    mu2=(self.mub(self.bc(b)))**2
+    #mu2=Q2
     Q = np.sqrt(Q2)
     F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
     D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)

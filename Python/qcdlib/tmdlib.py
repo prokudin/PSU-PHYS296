@@ -180,6 +180,7 @@ class GK(CORE):
     self.g2=0.1
     self.Q0=1.
     self.bmax=1.
+    self.bmin=0.1
 
 #  def setup(self):
 
