@@ -3,6 +3,7 @@ import sys,os
 sys.path.insert(1,'../') 
 import numpy as np
 import time
+from tools.tools import load_config
 from scipy.integrate import quad
 #from external.CJLIB.CJ import CJ
 from external.PDF.CT10 import CT10
@@ -76,6 +77,16 @@ class CORE:
 
 class PDF(CORE):
 
+  def get_params(self):
+    pre_params=load_config(self.conf['path2upol_compass'])
+    params = {'pdf': ['widths0 valence', 'widths0 sea'], 'ff': ['widths0 pi+ unfav', 'widths0 k+ fav', 'widths0 pi+ fav', 'widths0 k+ unfav'], 'gk': ['Q0', 'bmax', 'g2']}
+    newparams = {'pdf': {}, 'ff': {}, 'gk': {}}
+    for key in params.keys():
+      for param in params[str(key)]:
+        newparams[str(key)][str(param)] = pre_params['params'][str(key)][str(param)]['value']
+    return newparams['pdf']
+
+
   def __init__(self,conf):
     self.aux=conf['aux']
     self.conf=conf
@@ -85,8 +96,9 @@ class PDF(CORE):
   def set_default_params(self):
 
     self.widths0={}
-    self.widths0['valence']=0.3
-    self.widths0['sea']=0.3
+    self.get_params()['widths0 valence']
+    self.widths0['valence']=self.get_params()['widths0 valence'] #0.3
+    self.widths0['sea']= self.get_params()['widths0 sea'] #0.3
 
     self.widths={}
     self.widths['p']=np.ones(11)
@@ -112,6 +124,15 @@ class PDF(CORE):
 
 class FF(CORE):
 
+  def get_params(self):
+    pre_params=load_config(self.conf['path2upol_compass'])
+    params = {'pdf': ['widths0 valence', 'widths0 sea'], 'ff': ['widths0 pi+ unfav', 'widths0 k+ fav', 'widths0 pi+ fav', 'widths0 k+ unfav'], 'gk': ['Q0', 'bmax', 'g2']}
+    newparams = {'pdf': {}, 'ff': {}, 'gk': {}}
+    for key in params.keys():
+      for param in params[str(key)]:
+        newparams[str(key)][str(param)] = pre_params['params'][str(key)][str(param)]['value']
+    return newparams['ff']
+
   def __init__(self,conf):
     self.aux=conf['aux']
     self.conf=conf
@@ -121,10 +142,10 @@ class FF(CORE):
   def set_default_params(self):
 
     self.widths0={}
-    self.widths0['pi+ fav']  =0.12
-    self.widths0['pi+ unfav']=0.12
-    self.widths0['k+ fav']   =0.12
-    self.widths0['k+ unfav'] =0.12
+    self.widths0['pi+ fav']  =self.get_params()['widths0 pi+ fav']   #0.12
+    self.widths0['pi+ unfav']=self.get_params()['widths0 pi+ unfav'] #0.12
+    self.widths0['k+ fav']   =self.get_params()['widths0 k+ fav']    #0.12
+    self.widths0['k+ unfav'] =self.get_params()['widths0 k+ unfav']  #0.12
     
     self.widths={}
     self.widths['pi+']=np.ones(11)
@@ -170,6 +191,15 @@ class FF(CORE):
 # class for "toy" evolution
 class GK(CORE):
 
+  def get_params(self):
+    pre_params=load_config(self.conf['path2upol_compass'])
+    params = {'pdf': ['widths0 valence', 'widths0 sea'], 'ff': ['widths0 pi+ unfav', 'widths0 k+ fav', 'widths0 pi+ fav', 'widths0 k+ unfav'], 'gk': ['Q0', 'bmax', 'g2']}
+    newparams = {'pdf': {}, 'ff': {}, 'gk': {}}
+    for key in params.keys():
+      for param in params[str(key)]:
+        newparams[str(key)][str(param)] = pre_params['params'][str(key)][str(param)]['value']
+    return newparams['gk']
+
   def __init__(self,conf):
     self.aux=conf['aux']
     self.conf=conf
@@ -177,10 +207,9 @@ class GK(CORE):
 #    self.setup()
 
   def set_default_params(self):
-    self.g2=0.1
-    self.Q0=1.
-    self.bmax=1.
-    self.bmin=0.1
+    self.g2=self.get_params()['g2']#0.1
+    self.Q0=self.get_params()['Q0']#1.0
+    self.bmax=self.get_params()['bmax']#1.0
 
 #  def setup(self):
 
@@ -226,6 +255,7 @@ if __name__=='__main__':
 
   conf={}
 #  conf['path2CJ'] ='../external/CJLIB'
+  conf['path2upol_compass'] ='../fitlab/inputs/upol_compass.py'
   conf['path2CT10'] ='../external/PDF'
   conf['path2LSS']='../external/LSSLIB'
   conf['path2GRSV']='../external/GRSVLIB'

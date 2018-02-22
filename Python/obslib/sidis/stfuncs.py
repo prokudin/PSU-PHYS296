@@ -19,6 +19,7 @@ class STFUNCS:  # creating a class of
 
   def __init__(self,conf):
     self.aux=conf['aux']  
+    #print conf['ff']
     self.conf=conf
     eu2,ed2=4/9.,1/9. 
     self.e2=[]   #open list
@@ -92,12 +93,10 @@ class STFUNCS:  # creating a class of
     factor=coupling**2/(x*y*Q2)*(1-y+y**2)
     return factor*(self.get_FX(1,x,z,Q2,pT,target,hadron))
 
-# bc
-  def bc(self,b):
-    return np.sqrt(b**2+(self.conf['gk'].bmin)**2)
     
 # bstar
   def bstar(self,b):
+    #print self.conf['gk'].bmax
     return b/np.sqrt(1+b**2/(self.conf['gk'].bmax)**2)
 
 # mub
@@ -107,6 +106,8 @@ class STFUNCS:  # creating a class of
 # gk function
   def get_gk(self,b,z,x,Q):
     wq=np.ones(len(self.e2))
+    #print self.conf['gk'].g2
+    #print Q
     return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (z*Q)/(x*self.conf['gk'].Q0) )
 #    return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (Q)/(self.conf['gk'].Q0) )
 
@@ -119,8 +120,8 @@ class STFUNCS:  # creating a class of
     k1=self.D[i]['k1']
     k2=self.D[i]['k2']
     if k1==None or k2==None: return 0
-    mu2=(self.mub(self.bc(b)))**2
-    #mu2=Q2
+    #mu2=self.mub(b)**2
+    mu2=Q2
     Q = np.sqrt(Q2)
     F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
     D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
@@ -131,6 +132,7 @@ class STFUNCS:  # creating a class of
     
 # Structure function FUU in b space
   def FUU_b(self,x,Q2,y,z,q,b,target,hadron):
+    #print Q2
     factor = 1.0
     return factor*(self.get_FX_b(1,x,z,Q2,q,b,target,hadron))
 
@@ -199,6 +201,8 @@ if __name__=='__main__':
     conf={}
     cwd = os.getcwd()
     #  conf['path2CJ'] ='../../external/CJLIB'
+    print os.getcwd()
+    conf['path2upol_compass'] ='../../fitlab/inputs/upol_compass.py'
     conf['path2CT10'] ='../../external/PDF'
     conf['path2LSS']='../../external/LSSLIB'
     conf['path2DSS']='../../external/DSSLIB'
@@ -226,29 +230,46 @@ if __name__=='__main__':
     target='p'
     hadron='pi+' 
     
-    pT = np.linspace(0.01, z*np.sqrt(Q2), 30)
-    FUUquad = [stfuncs.FUU_q_quad(x,Q2,y,z,p/z,target,hadron,1e-3)[0] for p in pT]
-    FUUfquad = [stfuncs.FUU_q_fquad(x,Q2,y,z,p/z,target,hadron,10) for p in pT]
-    FUUOgata = [stfuncs.FUU_q(x,Q2,y,z,p/z,target,hadron,Nmax = 20) for p in pT]
-    FUUgauss = [stfuncs.get_FX(1,x,z,Q2,p,target,hadron) for p in pT]
+    bT = np.logspace(-2, 1)
+    FUUbQ1x01 = [b*stfuncs.FUU_b(0.0055,1.0,y,z,1.0,b,target,hadron) for b in bT]
+    FUUbQ100x03 = [b*stfuncs.FUU_b(0.3,100.0,y,z,100.0,b,target,hadron) for b in bT]
+    FUUbQ100x01 = [b*stfuncs.FUU_b(0.0055,100.0,y,z,1.0,b,target,hadron) for b in bT]
+    FUUbQ1x03 = [b*stfuncs.FUU_b(0.3,1.0,y,z,100.0,b,target,hadron) for b in bT]
+    #pT = np.linspace(0.01, z*np.sqrt(Q2), 30)
+    #FUUquad = [stfuncs.FUU_q_quad(x,Q2,y,z,p/z,target,hadron,1e-3)[0] for p in pT]
+    #FUUfquad = [stfuncs.FUU_q_fquad(x,Q2,y,z,p/z,target,hadron,10) for p in pT]
+    #FUUOgata = [stfuncs.FUU_q(x,Q2,y,z,p/z,target,hadron,Nmax = 20) for p in pT]
+    #FUUgauss = [stfuncs.get_FX(1,x,z,Q2,p,target,hadron) for p in pT]
     
-    ax = py.subplot(121)
-    ax.plot(pT, FUUgauss, label = 'Analytic')
+    ax = py.subplot(111)
+    ax.plot(bT, FUUbQ1x01, label = 'Q2 = 1.0, x = 0.0055')
+    ax.plot(bT, FUUbQ100x03, label = 'Q2 = 100.0, x = 0.3')
+    ax.plot(bT, FUUbQ1x03, label = 'Q2 = 1.0, x = 0.3')
+    ax.plot(bT, FUUbQ100x01, label = 'Q2 = 100.0, x = 0.0055')
+    ax.semilogx()
+    ax.set_xlabel('b_T (1/GeV)', fontsize=10)
+    ax.set_ylabel('FUU(b)', fontsize=10)
+    ax.legend()
+    
+    
+    
+    #ax = py.subplot(132)
+    #ax.plot(pT, FUUgauss, label = 'Analytic')
     #ax.errorbar(pT, FUUfquad, [0]*len(pT), label = 'Fixed Quad')
-    ax.errorbar(pT, FUUquad, [0]*len(pT), label = 'Quad')
-    ax.errorbar(pT, FUUOgata, [0]*len(pT), label = 'Ogata')
-    ax.set_xlabel('p_T (GeV)', fontsize=10)
-    ax.set_ylabel('FUU(q, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
-    ax.semilogy()
-    ax.legend()
+    #ax.errorbar(pT, FUUquad, [0]*len(pT), label = 'Quad')
+    #ax.errorbar(pT, FUUOgata, [0]*len(pT), label = 'Ogata')
+    #ax.set_xlabel('p_T (GeV)', fontsize=10)
+    #ax.set_ylabel('FUU(q, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
+    #ax.semilogy()
+    #ax.legend()
     
-    ax = py.subplot(122)
-    ax.errorbar(pT, [FUUquad[i]/FUUgauss[i] for i in range(len(pT))], [0]*len(pT), label = 'Quad/Analytic')
+    #ax = py.subplot(133)
+    #ax.errorbar(pT, [FUUquad[i]/FUUgauss[i] for i in range(len(pT))], [0]*len(pT), label = 'Quad/Analytic')
     #ax.errorbar(pT, [FUUfquad[i]/FUUgauss[i] for i in range(len(pT))], [0]*len(pT), label = 'FQuad/Analytic')
-    ax.errorbar(pT, [FUUOgata[i]/FUUgauss[i] for i in range(len(pT))], [0]*len(pT), label = 'Ogata/Analytic')
-    ax.set_xlabel('p_T (GeV)', fontsize=10)
-    ax.set_ylabel('FUU ratio (q, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
+    #ax.errorbar(pT, [FUUOgata[i]/FUUgauss[i] for i in range(len(pT))], [0]*len(pT), label = 'Ogata/Analytic')
+    #ax.set_xlabel('p_T (GeV)', fontsize=10)
+    #ax.set_ylabel('FUU ratio (q, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
     
-    py.tight_layout()
-    ax.legend()
-    py.show()
+    #py.tight_layout()
+    #ax.legend()
+    #py.show()
