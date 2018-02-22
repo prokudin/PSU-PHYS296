@@ -92,7 +92,9 @@ class STFUNCS:  # creating a class of
     coupling=1.0/137
     factor=coupling**2/(x*y*Q2)*(1-y+y**2)
     return factor*(self.get_FX(1,x,z,Q2,pT,target,hadron))
-
+  
+  def bc(self,b):
+    return np.sqrt(b**2+(self.conf['gk'].bmin)**2)
     
 # bstar
   def bstar(self,b):

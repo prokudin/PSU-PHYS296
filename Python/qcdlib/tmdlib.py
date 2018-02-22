@@ -79,7 +79,7 @@ class PDF(CORE):
 
   def get_params(self):
     pre_params=load_config(self.conf['path2upol_compass'])
-    params = {'pdf': ['widths0 valence', 'widths0 sea'], 'ff': ['widths0 pi+ unfav', 'widths0 k+ fav', 'widths0 pi+ fav', 'widths0 k+ unfav'], 'gk': ['Q0', 'bmax', 'g2']}
+    params = {'pdf': ['widths0 valence', 'widths0 sea'], 'ff': ['widths0 pi+ unfav', 'widths0 k+ fav', 'widths0 pi+ fav', 'widths0 k+ unfav'], 'gk': ['Q0', 'bmax', 'g2', 'bmin']}
     newparams = {'pdf': {}, 'ff': {}, 'gk': {}}
     for key in params.keys():
       for param in params[str(key)]:
@@ -126,7 +126,7 @@ class FF(CORE):
 
   def get_params(self):
     pre_params=load_config(self.conf['path2upol_compass'])
-    params = {'pdf': ['widths0 valence', 'widths0 sea'], 'ff': ['widths0 pi+ unfav', 'widths0 k+ fav', 'widths0 pi+ fav', 'widths0 k+ unfav'], 'gk': ['Q0', 'bmax', 'g2']}
+    params = {'pdf': ['widths0 valence', 'widths0 sea'], 'ff': ['widths0 pi+ unfav', 'widths0 k+ fav', 'widths0 pi+ fav', 'widths0 k+ unfav'], 'gk': ['Q0', 'bmax', 'g2', 'bmin']}
     newparams = {'pdf': {}, 'ff': {}, 'gk': {}}
     for key in params.keys():
       for param in params[str(key)]:
@@ -193,7 +193,7 @@ class GK(CORE):
 
   def get_params(self):
     pre_params=load_config(self.conf['path2upol_compass'])
-    params = {'pdf': ['widths0 valence', 'widths0 sea'], 'ff': ['widths0 pi+ unfav', 'widths0 k+ fav', 'widths0 pi+ fav', 'widths0 k+ unfav'], 'gk': ['Q0', 'bmax', 'g2']}
+    params = {'pdf': ['widths0 valence', 'widths0 sea'], 'ff': ['widths0 pi+ unfav', 'widths0 k+ fav', 'widths0 pi+ fav', 'widths0 k+ unfav'], 'gk': ['Q0', 'bmax', 'g2', 'bmin']}
     newparams = {'pdf': {}, 'ff': {}, 'gk': {}}
     for key in params.keys():
       for param in params[str(key)]:
@@ -210,6 +210,7 @@ class GK(CORE):
     self.g2=self.get_params()['g2']#0.1
     self.Q0=self.get_params()['Q0']#1.0
     self.bmax=self.get_params()['bmax']#1.0
+    self.bmin=0.1
 
 #  def setup(self):
 
