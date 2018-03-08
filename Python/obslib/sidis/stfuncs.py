@@ -18,7 +18,8 @@ from tools.hankel.inverters import Ogata, Quad, Fix_Quad
 class STFUNCS:  # creating a class of 
 
   def __init__(self,conf):
-    self.aux=conf['aux']  
+    self.aux=conf['aux']
+    self.CF = conf['aux'].CF
     self.conf=conf
     eu2,ed2=4/9.,1/9. 
     self.e2=[]   #open list
@@ -109,6 +110,14 @@ class STFUNCS:  # creating a class of
     wq=np.ones(len(self.e2))
 #    return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (z*Q)/(x*self.conf['gk'].Q0) )
     return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (Q)/(self.conf['gk'].Q0) )
+  
+# PT renormalization factor
+  def PT_evo(self, muf, zetaf, b):
+    CF = self.CF
+    C0 = 2*np.exp(-np.euler_gamma)
+    gamma = self.conf['alphaS'].get_alphaS(muf**2)*CF/np.pi
+    vf = 3.0/2.0+0.0
+    return gamma*(np.log(zetaf*b/C0/muf)+vf)
 
 # intrinsic widths
   def get_width(self,b,z,k1,k2,target,hadron):
@@ -128,7 +137,8 @@ class STFUNCS:  # creating a class of
     D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
     width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.get_gk(b,z,x,Q)
     K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
-    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
+    pt_evo = self.PT_evo(Q, Q**2, b)
+    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width-pt_evo))  #sums up the contributions
     
 # Structure function FUU in b space
   def FUU_b(self,x,Q2,y,z,q,b,target,hadron):
@@ -197,6 +207,9 @@ class STFUNCS:  # creating a class of
 #  plt.show()
 
 if __name__=='__main__':
+    import qcdlib.aux
+    import qcdlib.alphaS
+    
     conf={}
     cwd = os.getcwd()
     #  conf['path2CJ'] ='../../external/CJLIB'
@@ -215,6 +228,9 @@ if __name__=='__main__':
     conf['ppdf']=PPDF(conf)
     conf['ff']=FF(conf)
     conf['gk']=GK(conf)
+    conf['Q20'] = conf['gk'].Q0**2
+    conf['alphaSmode']='backward'
+    conf['alphaS']=qcdlib.alphaS.ALPHAS(conf)
     
     stfuncs=STFUNCS(conf)
     x=0.25
