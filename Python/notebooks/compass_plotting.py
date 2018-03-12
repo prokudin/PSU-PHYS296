@@ -30,15 +30,20 @@ data = pd.concat(pd.DataFrame(d)
 data = data[data["hadron"] == "pi+"]
 
 z_func = lambda z: [0.2, 0.3, 0.4, 0.6].index(z)
-k_max = 4
+z_cats = 4
 
 raw["qT"] = raw["pT"] / raw["z"]
 data["qT"] = data["pT"] / data["z"]
 
-# hor_lab = "pT"
-hor_lab = "qT"
+col_lab = "pT"
+hor_lab = r"$p_T$ (GeV)"
+# col_lab = "qT"
+# hor_lab = r"$q_T$ (GeV)"
 
-# function (raw, data, hor_lab, x_bins, q2_bins, z_func, k_max)
+vert_lab = r"$M_{D}^{\pi^+}$"
+
+# function (raw, data, col_lab, x_bins, q2_bins, z_func, z_cats,
+#           hor_lab, vert_lab)
 # possibly don't use z_func if "k(z)" already in raw and data
 raw = raw.copy(deep=True)
 data = data.copy(deep=True)
@@ -54,16 +59,33 @@ data["k(z)"] = data["z"].apply(z_func)
 
 # Plotting
 colors = plt.get_cmap("tab20").colors
-colors = list(colors[::2]) + list(colors[1::2])
+# tab20 colors are qualitative
+# Every other color is a lighter version of the former
 
 nrows = len(q2_bins) + 1
 ncols = len(x_bins) + 1
 
-subplot_kw = {"yscale": "log"}
+subplot_kw = {"yscale": "log", "zorder": 1}
 gridspec_kw = {"wspace": 0.0, "hspace": 0.0}
 
-fig, axs = plt.subplots(nrows, ncols, sharex="row", sharey="col",
+fig, axs = plt.subplots(nrows, ncols, sharex="col", sharey="row",
                         subplot_kw=subplot_kw, gridspec_kw=gridspec_kw)
+
+bigax = fig.add_subplot(111, zorder=0)
+
+bigax.spines["top"].set_visible(False)
+bigax.spines["right"].set_visible(False)
+
+bigax.set_xticks(np.linspace(0, 1, ncols + 1))
+bigax.set_yticks(np.linspace(0, 1, nrows + 1))
+
+bigax.set_xticklabels([""] + x_bins)
+bigax.set_yticklabels([""] + q2_bins)
+
+bigax.set_xlabel("$x$")
+bigax.set_ylabel("$Q^2$", rotation="horizontal")
+
+bigax.set_title("COMPASS")
 
 ax_bins = {
     (i + 1, j + 1): {
@@ -90,7 +112,7 @@ for i, j in ax_bins:
     if len(raw_slices[i, j]) == 0:
         del raw_slices[i, j]
 # raw_slices maps row, col to corresponding raw data slices
-# raw_slices does not contain empty slices
+# raw_slices does not contain empty slices (very useful)
 
 data_slices = {
     (i, j):
@@ -108,16 +130,33 @@ for i in range(nrows):
     for j in range(ncols):
         ax = axs[i, j]
 
-        # If there's nothing to plot
-        if (i, j) not in raw_slices:
+        if (i, j) not in raw_slices:  # If there's nothing to plot
             ax.set_axis_off()
             continue
 
-        # Remove unnecessary axis labels
-        if (i + 1, j) in raw_slices:
+        ax.tick_params(direction="in",
+                       labelsize="xx-small")
+
+        # Remove unnecessary x-axis labels
+        if (i + 1, j) in raw_slices:  # If not bottom
             ax.tick_params(labelbottom=False)
-        if (i, j - 1) in raw_slices:
+        else:  # If bottom
+            ax.set_xlabel(hor_lab,
+                          horizontalalignment="center",
+                          fontsize="x-small")
+            plt.setp(ax.get_xticklabels(), visible=True)
+
+        # Remove unnecessary y-axis labels
+        if (i, j - 1) in raw_slices:  # If not leftmost
             ax.tick_params(labelleft=False)
+        else:  # If leftmost
+            ax.set_ylabel(vert_lab,
+                          rotation="horizontal",
+                          verticalalignment="center",
+                          fontsize="small",
+                          labelpad=8)
+            ax.tick_params(axis="y", pad=0.0)
+            plt.setp(ax.get_yticklabels(), visible=True)
 
         q2_min, q2_max = ax_bins[i, j]["Q2"]
         x_min, x_max = ax_bins[i, j]["x"]
@@ -126,28 +165,40 @@ for i in range(nrows):
 
         data_sub = data_slices[i, j]
 
-        for k in range(k_max):
+        # Plotting for each z bin
+        for k in range(z_cats):
             raw_z = raw_sub[raw_sub["k(z)"] == k]
             data_z = data_sub[data_sub["k(z)"] == k]
 
-            ax.errorbar(raw_z[hor_lab],
+            # Raw data points
+            ax.errorbar(raw_z[col_lab],
                         raw_z["value"],
                         raw_z["delta"],
-                        color=colors[k],
+                        color=colors[2 * k + 1],
                         marker="o",
                         linestyle="",
                         linewidth=1,
                         markersize=1,
-                        alpha=0.2)
+                        alpha=0.2,
+                        zorder=2)
 
-            ax.errorbar(data_z[hor_lab],
+            # Selected data points
+            ax.errorbar(data_z[col_lab],
                         data_z["value"],
                         data_z["delta"],
-                        color=colors[k],
+                        color=colors[2 * k + 1],
                         marker="o",
                         linestyle="",
                         linewidth=1,
-                        markersize=1)
+                        markersize=1,
+                        alpha=0.8,
+                        zorder=3)
+
+            # Theory
+            ax.plot(data_z[col_lab],
+                    data_z["thy"],
+                    color=colors[2 * k],
+                    zorder=4)
 
         ax.relim()
         ax.autoscale_view()
