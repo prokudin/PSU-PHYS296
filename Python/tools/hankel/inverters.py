@@ -153,7 +153,7 @@ class Quad:
 class Fix_Quad:
 
     def fix_quadinv(self, w, q, nu, num):
-        quadreturn = fixed_quad(lambda bT: jv(nu,q*bT)*w(bT),0.0,4.0, n = num)
+        quadreturn = fixed_quad(lambda bT: jv(nu,q*bT)*w(bT),0.0,2.0, n = num)
         return 1/(2*np.pi)*quadreturn[0]#, 1/(2*np.pi)*quadreturn[1]
 
 #class Vegas:

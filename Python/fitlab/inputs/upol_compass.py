@@ -35,19 +35,19 @@ conf['path2DSS']='../external/DSSLIB'
 conf['params']={}
 
 conf['params']['pdf']={}
-conf['params']['pdf']['widths0 valence']  = {'value':<<    9.58671478186363223983e-01>>,'fixed':False,'min':0,'max':10}
-conf['params']['pdf']['widths0 sea']      = {'value':<<    5.33752699761774263010e+00>>,'fixed':False,'min':0,'max':10}
+conf['params']['pdf']['widths0 valence']  = {'value':<<    1.14200465635354397875e+00>>,'fixed':False,'min':0,'max':10}
+conf['params']['pdf']['widths0 sea']      = {'value':<<    3.62332368179761488136e+00>>,'fixed':False,'min':0,'max':10}
 
 conf['params']['ff']={}
-conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    1.27746501841445148084e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    1.83261787092420358469e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    1.21037515854115151903e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    2.45013925262173914987e-01>>,'fixed':False,'min':0,'max':1}
 conf['params']['ff']['widths0 k+ fav']    = {'value':<<    1.33775551334897768729e-01>>,'fixed':True,'min':0,'max':1}
 conf['params']['ff']['widths0 k+ unfav']  = {'value':<<    1.83430383139499497691e-01>>,'fixed':True,'min':0,'max':1}
 
 conf['params']['gk']={}
-conf['params']['gk']['g2']   = {'value':<<    1.71909164254450708142e+00>>,'fixed':False,'min':0,'max':10}
+conf['params']['gk']['g2']   = {'value':<<    1.98565940759446668551e+00>>,'fixed':False,'min':0,'max':10}
 conf['params']['gk']['Q0'] = {'value':<<    1.00000000000000000000e+00>>,'fixed':True,'min':1,'max':10}
-conf['params']['gk']['bmax'] = {'value':<<    1.52274515199819804323e+00>>,'fixed':False,'min':0.1,'max':10}#0.01,'max':10}
+conf['params']['gk']['bmax'] = {'value':<<    1.80164780786690270631e+00>>,'fixed':False,'min':0.1,'max':10}#0.01,'max':10}
 conf['params']['gk']['bmin'] = {'value':<<    3.95183715078905706264e-01>>,'fixed':True,'min':0.0001,'max':10}#0.01,'max':10}
 
 

@@ -14,8 +14,8 @@ from qcdlib.aux import AUX
 import pylab as py
 #import matplotlib.pyplot as plt
 from tools.hankel.inverters import Ogata, Quad, Fix_Quad
- 
-class STFUNCS:  # creating a class of 
+
+class STFUNCS:  # creating a class of
 
   def __init__(self,conf):
     self.aux=conf['aux']
@@ -54,7 +54,6 @@ class STFUNCS:  # creating a class of
   def get_K(self,i,x,Q2,z,pT,wq,k1,k2,target,hadron):
     if   i==1: return x
     elif i==2: return x
-    
 
 # defining functions
   def get_wq(self,z,k1,k2,target,hadron):
@@ -96,7 +95,7 @@ class STFUNCS:  # creating a class of
 # bc
   def bc(self,b):
     return np.sqrt(b**2+(self.conf['gk'].bmin)**2)
-    
+
 # bstar
   def bstar(self,b):
     return b/np.sqrt(1+b**2/(self.conf['gk'].bmax)**2)
@@ -110,7 +109,7 @@ class STFUNCS:  # creating a class of
     wq=np.ones(len(self.e2))
 #    return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (z*Q)/(x*self.conf['gk'].Q0) )
     return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (Q)/(self.conf['gk'].Q0) )
-  
+
 # PT renormalization factor
   def PT_evo(self, muf, zetaf, b):
     CF = self.CF
@@ -122,7 +121,7 @@ class STFUNCS:  # creating a class of
 # intrinsic widths
   def get_width(self,b,z,k1,k2,target,hadron):
     return np.abs(self.conf[k1].widths[target])/4 + np.abs(self.conf[k2].widths[hadron])/(4*z**2)
-      
+
 # Structure functions in b space
   def get_FX_b(self,i,x,z,Q2,pT,b,target,hadron):
     k1=self.D[i]['k1']
@@ -131,7 +130,7 @@ class STFUNCS:  # creating a class of
     #mu2=(self.mub(self.bc(b)))**2
     #mu2=Q2
     mu2=(self.mub(b))**2
-    if mu2>1000: mu2 = 1000.       
+    if mu2>1000: mu2 = 1000.
     Q = np.sqrt(Q2)
     F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
     D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
@@ -139,7 +138,7 @@ class STFUNCS:  # creating a class of
     K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
     pt_evo = self.PT_evo(Q, Q**2, b)
     return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width-pt_evo))  #sums up the contributions
-    
+
 # Structure function FUU in b space
   def FUU_b(self,x,Q2,y,z,q,b,target,hadron):
     factor = 1.0
@@ -194,7 +193,7 @@ class STFUNCS:  # creating a class of
 #  pT=0.3
 #  y=Q2/(2*m*E*x)
 #  target='p'
-#  hadron='pi+' 
+#  hadron='pi+'
 #  for i in range(1,2): print i,stfuncs.get_FX(i,x,z,Q2,pT,target,hadron)
 #  print stfuncs.FLL(x,Q2,y,z,pT,target,hadron)
 #  print stfuncs.FUU(x,Q2,y,z,pT,target,hadron)
