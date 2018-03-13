@@ -78,7 +78,13 @@ class Plotter(object):
         self.big_ylabel = big_ylabel
         self.title = title
 
-        tab20_colors = plt.get_cmap("tab20").colors  # Use as defaults
+        # Use tab20 colors as defaults
+        tab20_colors = ("#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78",
+                        "#2ca02c", "#98df8a", "#d62728", "#ff9896",
+                        "#9467bd", "#c5b0d5", "#8c564b", "#c49c94",
+                        "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7",
+                        "#bcbd22", "#dbdb8d", "#17becf", "#9edae5")
+
         self.raw_colors = (tab20_colors[1::2] if (raw_colors is None)
                            else raw_colors)
         self.data_colors = (tab20_colors[1::2] if (data_colors is None)
