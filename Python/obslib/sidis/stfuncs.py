@@ -136,9 +136,12 @@ class STFUNCS:  # creating a class of
     D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
     width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.get_gk(b,z,x,Q)
     K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
-    pt_evo = self.PT_evo(Q, Q**2, b)
-    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width-pt_evo))  #sums up the contributions
+    #pt_evo = self.PT_evo(Q, Q**2, b)
+    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
+    #pt_evo = self.PT_evo(Q, Q**2, b)
+    #return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width-pt_evo))  #sums up the contributions
 
+ 
 # Structure function FUU in b space
   def FUU_b(self,x,Q2,y,z,q,b,target,hadron):
     factor = 1.0
