@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division, print_function
-import numpy as np
-# import matplotlib.patches as mpatches
+import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
+import numpy as np
 
 
-class Plotter(object):  # TODO: add legend
+class Plotter(object):
     def __init__(self,
                  raw=None,
                  data=None,
@@ -15,6 +15,7 @@ class Plotter(object):  # TODO: add legend
                  x_bins=None,
                  z_func=None,
                  z_ids=None,
+                 z_labs=None,
                  sub_xlabel=None,
                  sub_ylabel=None,
                  big_xlabel=None,
@@ -26,23 +27,34 @@ class Plotter(object):  # TODO: add legend
                  subplot_kw=None,
                  gridspec_kw=None,
                  fig_kw=None,
-                 bigax_kw=None
+                 bigax_kw=None,
+                 raw_plot_kw=None,
+                 data_plot_kw=None,
+                 thy_plot_kw=None
                  ):
         self._raw = None
         self._data = None
+        self._col_lab = None
         self._q2_bins = None
         self._x_bins = None
         self._z_func = None
+        self._z_ids = None
         self._subplot_kw = None
         self._gridspec_kw = None
         self._fig_kw = None
         self._bigax_kw = None
+        self._raw_plot_kw = None
+        self._data_plot_kw = None
+        self._thy_plot_kw = None
 
         if raw is not None:
             self.raw = raw
 
         if data is not None:
             self.data = data
+
+        if col_lab is not None:
+            self.col_lab = col_lab
 
         self.nrows = None
         if q2_bins is not None:
@@ -55,9 +67,10 @@ class Plotter(object):  # TODO: add legend
         if z_func is not None:
             self.z_func = z_func
 
-        self.z_ids = z_ids
+        if z_ids is not None:
+            self.z_ids = z_ids
 
-        self.col_lab = col_lab
+        self.z_labs = z_labs
 
         self.sub_xlabel = sub_xlabel
         self.sub_ylabel = sub_ylabel
@@ -77,6 +90,9 @@ class Plotter(object):  # TODO: add legend
         self.gridspec_kw = gridspec_kw
         self.fig_kw = fig_kw
         self.bigax_kw = bigax_kw
+        self.raw_plot_kw = raw_plot_kw
+        self.data_plot_kw = data_plot_kw
+        self.thy_plot_kw = thy_plot_kw
 
         self._ax_bins = None  # Determined in self.plot()
         self._raw_slices = None  # Determined in self.plot()
@@ -101,6 +117,8 @@ class Plotter(object):  # TODO: add legend
                 self._raw["delta"] = self._raw["stat_u"]
         if "k(z)" not in self._raw.columns and self.z_func is not None:
             self._raw["k(z)"] = self._raw["z"].apply(self.z_func)
+        if self.col_lab is not None:
+            self._raw.sort_values(by=self.col_lab, inplace=True)
 
     @property
     def data(self):
@@ -117,6 +135,20 @@ class Plotter(object):  # TODO: add legend
                 self._data["delta"] = self._data["stat_u"]
         if "k(z)" not in self._data.columns and self.z_func is not None:
             self._data["k(z)"] = self._data["z"].apply(self.z_func)
+        if self.col_lab is not None:
+            self._data.sort_values(by=self.col_lab, inplace=True)
+
+    @property
+    def col_lab(self):
+        return self._col_lab
+
+    @col_lab.setter
+    def col_lab(self, value):
+        self._col_lab = value
+        if self.raw is not None:
+            self.raw.sort_values(by=self._col_lab, inplace=True)
+        if self.data is not None:
+            self.data.sort_values(by=self._col_lab, inplace=True)
 
     @property
     def q2_bins(self):
@@ -147,6 +179,15 @@ class Plotter(object):  # TODO: add legend
             self.raw["k(z)"] = self.raw["z"].apply(self._z_func)
         if self.data is not None and "k(z)" not in self.data.columns:
             self.data["k(z)"] = self.data["z"].apply(self._z_func)
+
+    @property
+    def z_ids(self):
+        return self._z_ids
+
+    @z_ids.setter
+    def z_ids(self, value):
+        self._z_ids = value
+        self.z_labs = {k: None for k in self._z_ids}
 
     @property
     def subplot_kw(self):
@@ -195,6 +236,57 @@ class Plotter(object):  # TODO: add legend
             self._bigax_kw = value
             if "zorder" not in self._bigax_kw:
                 self._bigax_kw["zorder"] = 0
+
+    @property
+    def raw_plot_kw(self):
+        return self._raw_plot_kw
+
+    @raw_plot_kw.setter
+    def raw_plot_kw(self, value):
+        if value is None:
+            self._raw_plot_kw = {"marker": "o",
+                                 "linestyle": "",
+                                 "linewidth": 1,
+                                 "markersize": 1,
+                                 "alpha": 0.2,
+                                 "zorder": 2
+                                 }  # Defaults
+        else:
+            self._raw_plot_kw = value
+            if "zorder" not in self._raw_plot_kw:
+                self._raw_plot_kw["zorder"] = 2
+
+    @property
+    def data_plot_kw(self):
+        return self._data_plot_kw
+
+    @data_plot_kw.setter
+    def data_plot_kw(self, value):
+        if value is None:
+            self._data_plot_kw = {"marker": "o",
+                                  "linestyle": "",
+                                  "linewidth": 1,
+                                  "markersize": 1,
+                                  "alpha": 0.8,
+                                  "zorder": 3
+                                  }  # Defaults
+        else:
+            self._data_plot_kw = value
+            if "zorder" not in self._data_plot_kw:
+                self._data_plot_kw["zorder"] = 3
+
+    @property
+    def thy_plot_kw(self):
+        return self._thy_plot_kw
+
+    @thy_plot_kw.setter
+    def thy_plot_kw(self, value):
+        if value is None:
+            self._thy_plot_kw = {"zorder": 4}  # Defaults
+        else:
+            self._thy_plot_kw = value
+            if "zorder" not in self._thy_plot_kw:
+                self._thy_plot_kw["zorder"] = 4
 
     @property  # Read-only
     def ax_bins(self):
@@ -355,33 +447,26 @@ class Plotter(object):  # TODO: add legend
                                 raw_z["value"],
                                 raw_z["delta"],
                                 color=raw_colors[k % nraw_colors],
-                                marker="o",
-                                linestyle="",
-                                linewidth=1,
-                                markersize=1,
-                                alpha=0.2,
-                                zorder=2)
-                    # TODO: add raw_plot_kw
+                                **self.raw_plot_kw)
 
                     # Selected data points
                     ax.errorbar(data_z[self.col_lab],
                                 data_z["value"],
                                 data_z["delta"],
                                 color=data_colors[k % ndata_colors],
-                                marker="o",
-                                linestyle="",
-                                linewidth=1,
-                                markersize=1,
-                                alpha=0.8,
-                                zorder=3)
-                    # TODO: add data_plot_kw
+                                **self.data_plot_kw)
 
                     # Theory
                     ax.plot(data_z[self.col_lab],
                             data_z["thy"],
                             color=thy_colors[k % nthy_colors],
-                            zorder=4)
-                    # TODO: add thy_plot_kw
+                            **self.thy_plot_kw)
 
                 ax.relim()
                 ax.autoscale_view()
+
+        if set(self.z_labs.values()) != {None}:
+            patches = [mpatches.Patch(color=thy_colors[k % nthy_colors],
+                                      label=self.z_labs[k])
+                       for k in self.z_ids]
+            bigax.legend(handles=patches, loc="upper left")
