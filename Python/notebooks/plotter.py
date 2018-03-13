@@ -70,7 +70,8 @@ class Plotter(object):
         if z_ids is not None:
             self.z_ids = z_ids
 
-        self.z_labs = z_labs
+        if z_labs is not None:
+            self.z_labs = z_labs
 
         self.sub_xlabel = sub_xlabel
         self.sub_ylabel = sub_ylabel
