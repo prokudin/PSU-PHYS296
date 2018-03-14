@@ -116,7 +116,7 @@ class STFUNCS:  # creating a class of
     C0 = 2*np.exp(-np.euler_gamma)
     gamma = self.conf['alphaS'].get_alphaS(muf**2)*CF/np.pi
     vf = 3.0/2.0+0.0
-    return gamma*(np.log(zetaf*b/C0/muf)+vf)
+    return gamma*np.log(muf*2*b/2./C0)*(np.log(zetaf*b/C0/muf)+vf)
 
 # intrinsic widths
   def get_width(self,b,z,k1,k2,target,hadron):
@@ -137,9 +137,9 @@ class STFUNCS:  # creating a class of
     width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.get_gk(b,z,x,Q)
     K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
     #pt_evo = self.PT_evo(Q, Q**2, b)
-    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
-    #pt_evo = self.PT_evo(Q, Q**2, b)
-    #return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width-pt_evo))  #sums up the contributions
+    #return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
+    pt_evo = self.PT_evo(Q, Q**2, b)
+    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width-pt_evo))  #sums up the contributions
 
  
 # Structure function FUU in b space
