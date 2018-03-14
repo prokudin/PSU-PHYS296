@@ -30,7 +30,8 @@ class Plotter(object):
                  bigax_kw=None,
                  raw_plot_kw=None,
                  data_plot_kw=None,
-                 thy_plot_kw=None
+                 thy_plot_kw=None,
+                 legend_kw=None
                  ):
         self._raw = None
         self._data = None
@@ -70,7 +71,8 @@ class Plotter(object):
         if z_ids is not None:
             self.z_ids = z_ids
 
-        self.z_labs = z_labs
+        if z_labs is not None:
+            self.z_labs = z_labs
 
         self.sub_xlabel = sub_xlabel
         self.sub_ylabel = sub_ylabel
@@ -99,6 +101,10 @@ class Plotter(object):
         self.raw_plot_kw = raw_plot_kw
         self.data_plot_kw = data_plot_kw
         self.thy_plot_kw = thy_plot_kw
+
+        self.legend_kw = legend_kw
+        if self.legend_kw is None:
+            self.legend_kw = {"loc": "upper left"}
 
         self._ax_bins = None  # Determined in self.plot()
         self._raw_slices = None  # Determined in self.plot()
@@ -475,4 +481,4 @@ class Plotter(object):
             patches = [mpatches.Patch(color=thy_colors[k % nthy_colors],
                                       label=self.z_labs[k])
                        for k in self.z_ids]
-            bigax.legend(handles=patches, loc="upper left")
+            bigax.legend(handles=patches, **self.legend_kw)
