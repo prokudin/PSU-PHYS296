@@ -128,18 +128,18 @@ class STFUNCS:  # creating a class of
     k2=self.D[i]['k2']
     if k1==None or k2==None: return 0
     #mu2=(self.mub(self.bc(b)))**2
-    #mu2=Q2
-    mu2=(self.mub(b))**2
+    mu2=Q2
+    #mu2=(self.mub(b))**2
     if mu2>1000: mu2 = 1000.
     Q = np.sqrt(Q2)
     F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
     D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
-    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.get_gk(b,z,x,Q)
+    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  0*self.get_gk(b,z,x,Q)
     K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
     #pt_evo = self.PT_evo(Q, Q**2, b)
-    #return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
-    pt_evo = self.PT_evo(Q, Q**2, b)
-    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width-pt_evo))  #sums up the contributions
+    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
+    #pt_evo = self.PT_evo(Q, Q**2, b)
+    #return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width-pt_evo))  #sums up the contributions
 
  
 # Structure function FUU in b space

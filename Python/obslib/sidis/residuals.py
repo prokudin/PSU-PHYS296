@@ -42,9 +42,9 @@ class RESIDUALS(_RESIDUALS):
     if obs=='M_Hermes' and target=='proton': 
 
 #analytical method        
-      #FUU=self.stfuncs.get_FX(1,x,z,Q2,pT,'p',hadron)
+      FUU=self.stfuncs.get_FX(1,x,z,Q2,pT,'p',hadron)
 # with Fixed Quad method
-      FUU = self.stfuncs.FUU_q_fquad(x,Q2,y,z,pT/z,'p',hadron, 10)
+      #FUU = self.stfuncs.FUU_q_fquad(x,Q2,y,z,pT/z,'p',hadron, 10)
       
       F2 =self.dis_stfuncs.get_F2(x,Q2,'p')
       thy = 2*np.pi*pT*FUU/F2
@@ -52,11 +52,11 @@ class RESIDUALS(_RESIDUALS):
     elif obs=='M_Hermes' and target=='deuteron': 
 
 #analytical method        
-      #FUU = self.stfuncs.get_FX(1,x,z,Q2,pT,'p',hadron)\
-      #     +self.stfuncs.get_FX(1,x,z,Q2,pT,'n',hadron)
+      FUU = self.stfuncs.get_FX(1,x,z,Q2,pT,'p',hadron)\
+           +self.stfuncs.get_FX(1,x,z,Q2,pT,'n',hadron)
 # with Fixed Quad method
-      FUU = self.stfuncs.FUU_q_fquad(x,Q2,y,z,pT/z,'p',hadron, 10)\
-           +self.stfuncs.FUU_q_fquad(x,Q2,y,z,pT/z,'n',hadron, 10)
+      #FUU = self.stfuncs.FUU_q_fquad(x,Q2,y,z,pT/z,'p',hadron, 10)\
+      #     +self.stfuncs.FUU_q_fquad(x,Q2,y,z,pT/z,'n',hadron, 10)
            
       F2  = self.dis_stfuncs.get_F2(x,Q2,'p')\
            +self.dis_stfuncs.get_F2(x,Q2,'n')
