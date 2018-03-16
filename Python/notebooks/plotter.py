@@ -122,11 +122,10 @@ class Plotter(object):
     def raw(self, value):
         self._raw = value.copy(deep=True)
         if "delta" not in self._raw.columns:
-            if "sys_u" in self._raw.columns:
-                self._raw["delta"] = np.sqrt(self._raw["stat_u"] ** 2 +
-                                             self._raw["sys_u"] ** 2)
-            else:
-                self._raw["delta"] = self._raw["stat_u"]
+            self._raw["delta"] = np.sqrt(
+                sum(self._raw[col] ** 2 for col in self._raw.columns
+                    if col.endswith("_u"))
+            )
         if "k(z)" not in self._raw.columns and self.z_func is not None:
             self._raw["k(z)"] = self._raw["z"].apply(self.z_func)
         if self.col_lab is not None:
@@ -140,11 +139,10 @@ class Plotter(object):
     def data(self, value):
         self._data = value.copy(deep=True)
         if "delta" not in self._data.columns:
-            if "sys_u" in self._data.columns:
-                self._data["delta"] = np.sqrt(self._data["stat_u"] ** 2 +
-                                              self._data["sys_u"] ** 2)
-            else:
-                self._data["delta"] = self._data["stat_u"]
+            self._data["delta"] = np.sqrt(
+                sum(self._data[col] ** 2 for col in self._data.columns
+                    if col.endswith("_u"))
+            )
         if "k(z)" not in self._data.columns and self.z_func is not None:
             self._data["k(z)"] = self._data["z"].apply(self.z_func)
         if self.col_lab is not None:
