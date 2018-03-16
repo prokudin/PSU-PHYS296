@@ -1,76 +1,80 @@
 ## Instruction to setup PSU Phys server on windows
-# Last Up Date 11-12-17
+# Last Up Date 3-16-18
 
 Installation of required software.
 
 1. Install Penn State's VPN
-	- Go to the web page 'downloads.its.psu.edu'
-	- Slect 'Connecting to Penn State'
-	- Slect the 'Windows' next to 'VPN - Virtual Private Network (AnyConnect)'
-	- Slect the link 'Version: 4.4.03034'
-		- Open Installer after download is complete
-		- Install souftware; and slect 'Finished' to close the installer
+    - Go to the web page 'downloads.its.psu.edu'
+    - Select 'Connecting to Penn State'
+    - Select the 'Windows' next to 'VPN - Virtual Private Network (AnyConnect)'
+    - Select the link 'Version: 4.4.03034'
+        - Open Installer after download is complete
+        - Install software; and select 'Finished' to close the installer
 2. Install the Xming software
-	- Go to the web page 'https://sourceforge.net/projects/xming/'
-	- Slect 'Download: Xming-6-9-0-31-seup.exe' 
-		- Open Installer after download is complete
-		- Install souftware; 
-			- Slect 'Next' for the path and 
-			- 'Next' for Full installation 
-			- 'Next' for menue folder, 
-			- 'Next' for Addiotional tasks, 
-			- than 'Install' 		
-			- Slect 'Finished' to close the installer (no need to run the program yet)
+    - Go to the web page 'https://sourceforge.net/projects/xming/'
+    - Select 'Download: Xming-6-9-0-31-seup.exe'
+        - Open Installer after download is complete
+        - Install software;
+            - Select 'Next' for the path and
+            - 'Next' for Full installation
+            - 'Next' for menu folder,
+            - 'Next' for Additional tasks,
+            - than 'Install'        
+            - Select 'Finished' to close the installer (no need to run the program yet)
 3. Install putty.exe
-	- Go to the web page 'https://www.chiark.greenend.org.uk/~sgtatham/putty/'
-	- Slect 'Download it here' next to the latest version is 0.70
-	- Slect the 64-bit or 32-bit installer depending on your computer
-		- If you do not know use this web page: 
-			- 'https://support.microsoft.com/en-us/help/827218/how-to-determine-whether-a-computer-is-running-a-32-bit-version-or-64'
-		- Open Installer after download is complete
-		- Install souftware; 
-		- Slect 'Finished' to close the installer (no need to open 'ReadMe' file)
-4. Soufware in installed; Restart your computer.
+    - Go to the web page 'https://www.chiark.greenend.org.uk/~sgtatham/putty/'
+    - Select 'Download it here' next to the latest version is 0.70
+    - Select the 64-bit or 32-bit installer depending on your computer
+        - If you do not know use this web page:
+            - 'https://support.microsoft.com/en-us/help/827218/how-to-determine-whether-a-computer-is-running-a-32-bit-version-or-64'
+        - Open Installer after download is complete
+        - Install software;
+        - Select 'Finished' to close the installer (no need to open 'ReadMe' file)
+4. Software in installed; Restart your computer.
 
 Log into the Server
 
 1. Open Cisco AnyConnect Secure Mobility Client
-	- Slect 'Connect' on vpn.its.psu.edu
-	- enter PSU Username and Password for the ISPtoPSU group
-	- Slect Accept
+    - Select 'Connect' on vpn.its.psu.edu
+    - enter PSU Username and Password for the ISPtoPSU group
+    - Select Accept
 2. Run Xming
-	- Note this should run in the backround, you should see an icon task bar hiden icons
+    - Note this should run in the background, you should see an icon task bar hidden icons
 3. Run PuTTY
-	- In PuTTY Configuration; do the fallowing
-		- In 'Session', enter 'BK-AVP-R1.bk.psu.edu' in the 'Host Name'
-		- Under 'Connection', Slect the '+' next to 'SSH', Clock 'X11', than Check the box 'Enable X11 forwording'
- 	- Slect 'Open'
-4. In the client; 
-	- Enter your username and password provided by the Supper User (see email from Alexei)
+    - In PuTTY Configuration; do the fallowing
+        - In 'Session', enter 'BK-AVP-R1.bk.psu.edu' in the 'Host Name'
+        - Under 'Connection', Select the '+' next to 'SSH', Clock 'X11', than Check the box 'Enable X11 forwarding'
+     - Select 'Open'
+4. In the client;
 
-Set Up Directery and Clone Reposatry
+Enter this username and the password (sent by Alexey)
 
-Note: First you must log into the surver.
-1. Make the new Directy GIT
-	- In the client enter the comand ' mkdir GIT '
-2. change your current directy to the GIT folder
-	- Enter ' cd GIT '
-3. Clone the reposatry
+
+Once you are in the server:
+
+Set Up Directory and Clone Repository
+
+Note: First you must log into the server.
+1. Make the new Directory GIT
+    - In the client enter the command ' mkdir GIT '
+2. change your current directory to the GIT folder
+    - Enter ' cd GIT '
+3. Clone the repository
 a) Generate a key for your git
-	- Enter ' ssh-keygen -t rsa -b 4096 -C "zack0179@gmail.com" '
-	- Note: you must use the personal email for your GITHUB
-	- Press enter untill proped to make a passfrass, this will be used latter so remeber it or wright it down. 
+    - Enter ' ssh-keygen -t rsa -b 4096 -C "zack0179@gmail.com" '
+    - Note: you must use the personal email for your GITHUB
+    - Press enter until propped to make a passphrase, this will be used latter so remember it or wright it down.
 b) Add the key to your GITHUB account
-	- Enter the command ' more < ~/.ssh/id_rsa.pub '
-	- copy the results and pase them into your GITHUB account
-		- Use the instruction below starting at step 2. 
-		- https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/#platform-linux
-			- In the upper-right corner of any page, click your profile photo, then click Settings. 
-			- In the user settings sidebar, click SSH and GPG keys.
-			- Click New SSH key or Add SSH key.
-			- In the "Title" field, add a descriptive label for the new key. For example, if you're using a personal Mac, you might call this key "Server PSU".
-			- Paste your key into the "Key" field.
-			- Click Add SSH key.
-			- If prompted, confirm your GitHub password.
-c) Clone the respoatry
-	- In the Surver client: enter the comand ' git clone git@github.com:prokudin/PSU-PHYS296.git ' 
+    - Enter the command ' more < ~/.ssh/id_rsa.pub '
+    - copy the results and paste them into your GITHUB account
+        - Use the instruction below starting at step 2.
+        - https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/#platform-linux
+            - In the upper-right corner of any page, click your profile photo, then click Settings.
+            - In the user settings sidebar, click SSH and GPG keys.
+            - Click New SSH key or Add SSH key.
+            - In the "Title" field, add a descriptive label for the new key. For example, if you're using a personal Mac, you might call this key "Server PSU".
+            - Paste your key into the "Key" field.
+            - Click Add SSH key.
+            - If prompted, confirm your GitHub password.
+c) Clone the repository
+    - In the Server client: enter the command ' git clone git@github.com:prokudin/PSU-PHYS296.git ' 
