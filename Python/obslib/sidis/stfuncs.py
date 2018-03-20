@@ -141,7 +141,14 @@ class STFUNCS:  # creating a class of
     #pt_evo = self.PT_evo(Q, Q**2, b)
     #return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width-pt_evo))  #sums up the contributions
 
- 
+# Method by Jianwei
+  def get_FX_b_jianwei(self,i,x,z,Q2,pT,b,target,hadron):
+      if ( b > self.conf['gk'].b_max):
+          return self.get_FX_b(i,x,z,Q2,pT,b,target,hadron)
+      else:
+          # Andrea and Tianbo will work here
+          return 1./2.
+
 # Structure function FUU in b space
   def FUU_b(self,x,Q2,y,z,q,b,target,hadron):
     factor = 1.0
