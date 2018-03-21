@@ -13,6 +13,7 @@ class Plotter(object):
                  col_lab=None,
                  q2_bins=None,
                  x_bins=None,
+                 z_bins=None,
                  z_func=None,
                  z_ids=None,
                  z_labs=None,
@@ -38,6 +39,7 @@ class Plotter(object):
         self._col_lab = None
         self._q2_bins = None
         self._x_bins = None
+        self._z_bins = None
         self._z_func = None
         self._z_ids = None
         self._subplot_kw = None
@@ -64,6 +66,9 @@ class Plotter(object):
         self.ncols = None
         if x_bins is not None:
             self.x_bins = x_bins
+
+        if z_bins is not None:
+            self.z_bins = z_bins
 
         if z_func is not None:
             self.z_func = z_func
@@ -177,6 +182,22 @@ class Plotter(object):
     def x_bins(self, value):
         self.ncols = len(value) + 1
         self._x_bins = value
+
+    @property
+    def z_bins(self):
+        return self._z_bins
+
+    @z_bins.setter
+    def z_bins(self, value):
+        self._z_bins = _z_bins = value
+
+        def z_func(z):
+            for k, (zmin, zmax) in enumerate(zip(_z_bins[:-1], _z_bins[1:])):
+                if (z <= zmax) and ((zmin < z) or (k == 0 and zmin <= z)):
+                    return k
+
+        self.z_func = z_func
+        self.z_ids = tuple(range(len(_z_bins) - 1))
 
     @property
     def z_func(self):
