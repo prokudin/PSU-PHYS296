@@ -438,7 +438,9 @@ class Plotter(object):
 
                 ax.tick_params(which="both",
                                direction="in",
-                               labelsize="xx-small")
+                               labelsize="xx-small",
+                               labelbottom=True,
+                               labelleft=True)
 
                 # Remove unnecessary x-axis labels
                 if (i + 1, j) in raw_slices:  # If not bottom
