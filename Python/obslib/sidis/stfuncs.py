@@ -14,6 +14,7 @@ from qcdlib.aux import AUX
 import pylab as py
 #import matplotlib.pyplot as plt
 from tools.hankel.inverters import Ogata, Quad, Fix_Quad
+import ogata
 
 class STFUNCS:  # creating a class of
 
@@ -50,6 +51,13 @@ class STFUNCS:  # creating a class of
     self.ogata = Ogata()
     self.quad = Quad()
     self.fquad = Fix_Quad()
+   
+    qTmin=0.1
+    qTmax=3.0
+    xmin=0.5*qTmin
+    xmax=10*qTmax
+    self.ogata_fast=ogata.OGATA(xmin,xmax,1)
+
 
   def get_K(self,i,x,Q2,z,pT,wq,k1,k2,target,hadron):
     if   i==1: return x
@@ -171,6 +179,13 @@ class STFUNCS:  # creating a class of
     w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,q,b,target,hadron))
     inv = self.fquad.fix_quadinv(w, q, nu, num)
     return 2*np.pi*inv#[0], 2*np.pi*inv[1]
+
+  def FUU_fast(self,x,Q2,y,z,q,target,hadron,Nmax = 10):
+    nu = 0
+    Q = np.sqrt(Q2)
+    w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,q,b,target,hadron))
+    return self.ogata_fast.invert(w,q)
+
 
 #if __name__=='__main__':
 #
