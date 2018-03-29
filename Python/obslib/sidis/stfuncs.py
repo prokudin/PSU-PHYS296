@@ -51,12 +51,12 @@ class STFUNCS:  # creating a class of
     self.ogata = Ogata()
     self.quad = Quad()
     self.fquad = Fix_Quad()
-   
+    nu = 0
     qTmin=0.1
     qTmax=3.0
-    xmin=0.5*qTmin
-    xmax=10*qTmax
-    self.ogata_fast=ogata.OGATA(xmin,xmax,1)
+    xmin=0.01*qTmin
+    xmax=25*qTmax
+    self.ogata_fast=ogata.OGATA(xmin, xmax, nu)
 
 
   def get_K(self,i,x,Q2,z,pT,wq,k1,k2,target,hadron):
@@ -180,11 +180,9 @@ class STFUNCS:  # creating a class of
     inv = self.fquad.fix_quadinv(w, q, nu, num)
     return 2*np.pi*inv#[0], 2*np.pi*inv[1]
 
-  def FUU_fast(self,x,Q2,y,z,q,target,hadron,Nmax = 10):
-    nu = 0
-    Q = np.sqrt(Q2)
+  def FUU_fast(self,x,Q2,y,z,q,target,hadron):
     w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,q,b,target,hadron))
-    return self.ogata_fast.invert(w,q)
+    return 2*np.pi*self.ogata_fast.invert(w,q)
 
 
 #if __name__=='__main__':
@@ -259,7 +257,7 @@ if __name__=='__main__':
     stfuncs=STFUNCS(conf)
     x=0.25
     z=0.5
-    Q2=2.4
+    Q2=48.0
     mu2=2.0
     E=11.0
     m=0.938
@@ -269,26 +267,29 @@ if __name__=='__main__':
     
     pT = np.linspace(0.01, z*np.sqrt(Q2), 30)
     FUUquad = [stfuncs.FUU_q_quad(x,Q2,y,z,p/z,target,hadron,1e-3)[0] for p in pT]
-    FUUfquad = [stfuncs.FUU_q_fquad(x,Q2,y,z,p/z,target,hadron,10) for p in pT]
-    FUUOgata = [stfuncs.FUU_q(x,Q2,y,z,p/z,target,hadron,Nmax = 20) for p in pT]
+    #FUUfquad = [stfuncs.FUU_q_fquad(x,Q2,y,z,p/z,target,hadron,10) for p in pT]
+    #FUUOgata = [stfuncs.FUU_q(x,Q2,y,z,p/z,target,hadron,Nmax = 20) for p in pT]
+    FUUOgatafast = [stfuncs.FUU_fast(x,Q2,y,z,p/z,target,hadron) for p in pT]
     FUUgauss = [stfuncs.get_FX(1,x,z,Q2,p,target,hadron) for p in pT]
     
     ax = py.subplot(121)
     ax.plot(pT, FUUgauss, label = 'Analytic')
     #ax.errorbar(pT, FUUfquad, [0]*len(pT), label = 'Fixed Quad')
     ax.errorbar(pT, FUUquad, [0]*len(pT), label = 'Quad')
-    ax.errorbar(pT, FUUOgata, [0]*len(pT), label = 'Ogata')
+    ax.errorbar(pT, FUUOgatafast, [0]*len(pT), label = 'Ogata')
+    #ax.errorbar(pT, FUUOgata, [0]*len(pT), label = 'Ogata')
     ax.set_xlabel('p_T (GeV)', fontsize=10)
-    ax.set_ylabel('FUU(q, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
+    ax.set_ylabel('FUU(q, x=0.25, z=0.5, Q2='+str(Q2)+')', fontsize=10)
     ax.semilogy()
     ax.legend()
-    
     ax = py.subplot(122)
     ax.errorbar(pT, [FUUquad[i]/FUUgauss[i] for i in range(len(pT))], [0]*len(pT), label = 'Quad/Analytic')
+    ax.errorbar(pT, [FUUOgatafast[i]/FUUgauss[i] for i in range(len(pT))], [0]*len(pT), label = 'Ogata/Analytic')
     #ax.errorbar(pT, [FUUfquad[i]/FUUgauss[i] for i in range(len(pT))], [0]*len(pT), label = 'FQuad/Analytic')
-    ax.errorbar(pT, [FUUOgata[i]/FUUgauss[i] for i in range(len(pT))], [0]*len(pT), label = 'Ogata/Analytic')
+    #ax.errorbar(pT, [FUUOgata[i]/FUUgauss[i] for i in range(len(pT))], [0]*len(pT), label = 'Ogata/Analytic')
     ax.set_xlabel('p_T (GeV)', fontsize=10)
-    ax.set_ylabel('FUU ratio (q, x=0.25, z=0.5, Q2=2.4)', fontsize=10)
+    ax.set_ylabel('FUU ratio (q, x=0.25, z=0.5, Q2='+str(Q2)+')', fontsize=10)
+    ax.set_ylim([0, 2])
     
     py.tight_layout()
     ax.legend()
