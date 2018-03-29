@@ -46,7 +46,7 @@ class RESIDUALS(_RESIDUALS):
 # with Fixed Quad method
       #FUU = self.stfuncs.FUU_q_fquad(x,Q2,y,z,pT/z,'p',hadron, 10)
 # Ogata Method
-      #FUU =self.stfuncs.FUU_q(x,Q2,y,z,pT/z,'p',hadron, Nmax = 10)
+      #FUU =self.stfuncs.FUU_q(x,Q2,y,z,pT/z,'p',hadron, Nmax = 13)
       FUU =self.stfuncs.FUU_fast(x,Q2,y,z,pT/z,'p',hadron)
       #print 
       #print pT/z,Q2**0.5,FUU
@@ -64,8 +64,8 @@ class RESIDUALS(_RESIDUALS):
       #FUU = self.stfuncs.FUU_q_fquad(x,Q2,y,z,pT/z,'p',hadron, 10)\
       #    +self.stfuncs.FUU_q_fquad(x,Q2,y,z,pT/z,'n',hadron, 10)
 # Ogata Method
-      #FUU =self.stfuncs.FUU_q(x,Q2,y,z,pT/z,'p',hadron, Nmax = 10)\
-      #     +self.stfuncs.FUU_q(x,Q2,y,z,pT/z,'n',hadron, Nmax = 10)
+      #FUU =self.stfuncs.FUU_q(x,Q2,y,z,pT/z,'p',hadron, Nmax = 13)\
+      #     +self.stfuncs.FUU_q(x,Q2,y,z,pT/z,'n',hadron, Nmax = 13)
       FUU =self.stfuncs.FUU_fast(x,Q2,y,z,pT/z,'p',hadron)\
            +self.stfuncs.FUU_fast(x,Q2,y,z,pT/z,'n',hadron)
            
@@ -88,8 +88,8 @@ class RESIDUALS(_RESIDUALS):
      #      +self.stfuncs.FUU_q_quad(x,Q2,y,z,pT/z,'n',hadron)[0]
 
 # Ogata Method
-      #FUU =self.stfuncs.FUU_q(x,Q2,y,z,pT/z,'p',hadron, Nmax = 10)\
-      #     +self.stfuncs.FUU_q(x,Q2,y,z,pT/z,'n',hadron, Nmax = 10)
+      #FUU =self.stfuncs.FUU_q(x,Q2,y,z,pT/z,'p',hadron, Nmax = 13)\
+      #     +self.stfuncs.FUU_q(x,Q2,y,z,pT/z,'n',hadron, Nmax = 13)
       FUU =self.stfuncs.FUU_fast(x,Q2,y,z,pT/z,'p',hadron)\
            +self.stfuncs.FUU_fast(x,Q2,y,z,pT/z,'n',hadron)
 

@@ -144,6 +144,42 @@ class Ogata:
                 return _lib[str(bminlast)+','+str(bmaxlast)]
         else:
             print('itmax reached')
+
+    def get_b_vals3(self, bc, ib, it):
+        ccut = 4.0
+        #Original b range
+        bmin = bc/((ccut)**ib)
+        bmax = bc*ccut**it
+        #Double bmax
+        bmin1 = bc/((ccut)**ib)
+        bmax1 = bc*ccut**it*ccut
+        #Half bmin
+        bmin2 = bc/((ccut)**ib)/ccut
+        bmax2 = bc*ccut**it
+        return bmin, bmax, bmin1, bmax1, bmin2, bmax2
+
+    def compare3(self, w, b_min_half, b_max_dub):
+        #print b_min_half,b_max_dub
+        return w(b_min_half)>w(b_max_dub)
+
+    def adog3(self, w, qT, nu, Nmax, Q, ib = 1, it = 1):
+        #print ib, it
+        bc = 1/Q
+        b_min, b_max, b_min_half, b_max_half, b_min_dub, b_max_dub = self.get_b_vals3(bc, ib, it)
+        #print b_min, b_max
+        h, N = self.get_ogata_params_b(w, b_min, b_max, qT, nu)
+        if N<Nmax:
+            cut_bool = self.compare3(w, b_min_half, b_max_dub)
+            if cut_bool == True:
+                #print 'down'
+                return self.adog3(w, qT, nu, Nmax, Q, ib = ib+1, it = it+0)
+            else:
+                #print 'up'
+                return self.adog3(w, qT, nu, Nmax, Q, ib = ib+0, it = it+1)
+        else:
+            #print N
+            return 1/(2*np.pi)*self.ogata(lambda x: w(x/qT)/qT,h,N, nu)
+
 class Quad:
 
     def quadinv(self, w, q, nu, eps):
