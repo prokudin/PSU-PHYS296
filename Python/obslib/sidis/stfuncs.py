@@ -52,10 +52,14 @@ class STFUNCS:  # creating a class of
     self.quad = Quad()
     self.fquad = Fix_Quad()
     nu = 0
+    #qTmin=0.1
+    #qTmax=3.0
+    #xmin=0.01*qTmin
+    #xmax=25*qTmax
     qTmin=0.1
-    qTmax=3.0
-    xmin=0.01*qTmin
-    xmax=25*qTmax
+    qTmax=2.0
+    xmin=0.2*qTmin
+    xmax=3.5*qTmax
     self.ogata_fast=ogata.OGATA(xmin, xmax, nu)
 
 
