@@ -35,19 +35,19 @@ conf['path2DSS']='../external/DSSLIB'
 conf['params']={}
 
 conf['params']['pdf']={}
-conf['params']['pdf']['widths0 valence']  = {'value':<<    2.78235281959458014001e-01>>,'fixed':False,'min':0,'max':10}
-conf['params']['pdf']['widths0 sea']      = {'value':<<    4.16735290678309056034e-01>>,'fixed':False,'min':0,'max':10}
+conf['params']['pdf']['widths0 valence']  = {'value':<<    2.62111526535736771848e-01>>,'fixed':False,'min':0,'max':10}
+conf['params']['pdf']['widths0 sea']      = {'value':<<    4.54546309613160559593e-01>>,'fixed':False,'min':0,'max':10}
 
 conf['params']['ff']={}
-conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    2.10197044335630356393e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    1.93503371914111599317e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 k+ fav']    = {'value':<<    2.95719180608041365410e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 k+ unfav']  = {'value':<<    1.54432045766651482310e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    2.11195846199639658547e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    1.93054237855291910275e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 k+ fav']    = {'value':<<    2.98635175670050156960e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 k+ unfav']  = {'value':<<    1.38449119642011064801e-01>>,'fixed':False,'min':0,'max':1}
 
 conf['params']['gk']={}
-conf['params']['gk']['g2']   = {'value':<<    5.45616052116425720442e-01>>,'fixed':False,'min':0,'max':10}
+conf['params']['gk']['g2']   = {'value':<<    0.00000000000000000000e+00>>,'fixed':False,'min':0,'max':10}
 conf['params']['gk']['Q0'] = {'value':<<    1.00000000000000000000e+00>>,'fixed':True,'min':1,'max':10}
-conf['params']['gk']['bmax'] = {'value':<<    1.08815329127744719884e+00>>,'fixed':False,'min':0.1,'max':10}#0.01,'max':10}
+conf['params']['gk']['bmax'] = {'value':<<    1.30756493325539491224e+00>>,'fixed':False,'min':0.1,'max':10}#0.01,'max':10}
 conf['params']['gk']['bmin'] = {'value':<<    3.95183715078905706264e-01>>,'fixed':True,'min':0.0001,'max':10}#0.01,'max':10}
 
 

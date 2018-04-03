@@ -113,18 +113,27 @@ class STFUNCS:  # creating a class of
     return 2*np.exp(-np.euler_gamma)/self.bstar(b)
 
 # gk function
-  def get_gk(self,b,z,x,Q):
-    wq=np.ones(len(self.e2))
+#  def get_gk(self,b,z,x,Q):
+#    wq=np.ones(len(self.e2))
 #    return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (z*Q)/(x*self.conf['gk'].Q0) )
-    return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (Q)/(self.conf['gk'].Q0) )
+#    return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (Q)/(self.conf['gk'].Q0) )
 
-# PT renormalization factor
-  def PT_evo(self, muf, zetaf, b):
-    CF = self.CF
+    
+    # gk function (b)
+  def get_gk(self,b,Q):
+    wq=np.ones(len(self.e2))
+    return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b))
+
+    
+# Zeta prescription renormalization factor
+  def ZETA_PRESCRIPTION(self, muf, zetaf, x, z, b):
+    #CF = self.CF
     C0 = 2*np.exp(-np.euler_gamma)
-    gamma = self.conf['alphaS'].get_alphaS(muf**2)*CF/np.pi
+    #gamma = self.conf['alphaS'].get_alphaS(muf**2)*CF/np.pi
     vf = 3.0/2.0+0.0
-    return gamma*np.log(muf*2*b/2./C0)*(np.log(zetaf*b/C0/muf)+vf)
+    #return gamma*np.log(muf*2*b/2./C0)*(np.log(zetaf*b/C0/muf)+vf)
+    gk = self.get_gk(b,muf)
+    return gk*(np.log(zetaf*b/C0/muf)+vf)
 
 # intrinsic widths
   def get_width(self,b,z,k1,k2,target,hadron):
@@ -136,13 +145,15 @@ class STFUNCS:  # creating a class of
     k2=self.D[i]['k2']
     if k1==None or k2==None: return 0
     #mu2=(self.mub(self.bc(b)))**2
+    Q = np.sqrt(Q2)
     mu2=Q2
+    muf=Q
+    zetaf=Q2
     #mu2=(self.mub(b))**2
     if mu2>1000: mu2 = 1000.
-    Q = np.sqrt(Q2)
     F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
     D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
-    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  0*self.get_gk(b,z,x,Q)
+    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.ZETA_PRESCRIPTION(muf, zetaf, x, z, b)
     K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
     #pt_evo = self.PT_evo(Q, Q**2, b)
     return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions

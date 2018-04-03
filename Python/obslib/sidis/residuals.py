@@ -59,7 +59,7 @@ class RESIDUALS(_RESIDUALS):
 
 #analytical method        
       #FUU = self.stfuncs.get_FX(1,x,z,Q2,pT,'p',hadron)\
-      #    +self.stfuncs.get_FX(1,x,z,Q2,pT,'n',hadron)
+      #   +self.stfuncs.get_FX(1,x,z,Q2,pT,'n',hadron)
 # with Fixed Quad method
       #FUU = self.stfuncs.FUU_q_fquad(x,Q2,y,z,pT/z,'p',hadron, 10)\
       #    +self.stfuncs.FUU_q_fquad(x,Q2,y,z,pT/z,'n',hadron, 10)
