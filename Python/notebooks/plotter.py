@@ -431,7 +431,7 @@ class Plotter(object):
         for i in range(nrows):
             for j in range(ncols):
                 ax = axs[i, j]
-
+                #ax.set_ylims([10^(-3), 100.])
                 if (i, j) not in raw_slices:  # If there's nothing to plot
                     ax.set_axis_off()
                     continue
@@ -494,6 +494,7 @@ class Plotter(object):
                             data_z["thy"],
                             color=thy_colors[k % nthy_colors],
                             **self.thy_plot_kw)
+                    
 
                 ax.relim()
                 ax.autoscale_view()
