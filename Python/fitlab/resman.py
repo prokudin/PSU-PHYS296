@@ -51,10 +51,10 @@ class RESMAN:
     conf['_pdf'] =external.PDF.CT10.CT10(conf)
     conf['_ppdf']=external.LSSLIB.LSS.LSS(conf)
     conf['_ff']  =external.DSSLIB.DSS.DSS(conf)
+    conf['gk']   =qcdlib.tmdlib.GK(conf)
     conf['pdf']  =qcdlib.tmdlib.PDF(conf)
     conf['ppdf'] =qcdlib.tmdlib.PPDF(conf)
     conf['ff']   =qcdlib.tmdlib.FF(conf)
-    conf['gk']   =qcdlib.tmdlib.GK(conf)
    
   def setup_sidis(self):
     conf=self.conf
