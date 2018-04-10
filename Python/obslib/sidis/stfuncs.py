@@ -136,12 +136,13 @@ class STFUNCS:  # creating a class of
     #pertutbative part of D
     #gamma0 = 4. * self.CF
     #beta0 = 11.-2./3.*3.  # self.nf
-    X=18.*self.conf['alphaS'].get_alphaS(muf**2)*np.log(muf*b*C0) 
+    #X=18.*self.conf['alphaS'].get_alphaS(muf**2)*np.log(muf*b*C0) 
     #print self.bstar(b)*C0
-    lX=np.log(1.-X)        
-    Dresummed=-8./27.*lX
-    return (gk-Dresummed)*(np.log(zetaf*b/C0/muf)+vf)
-
+    #lX=np.log(1.-X)        
+    #Dresummed=-8./27.*lX
+    #return (gk-Dresummed)*(np.log(zetaf*b/C0/muf)+vf)
+    return (gk)*(np.log(zetaf*b/C0/muf)+vf)
+    
 # intrinsic widths
   def get_width(self,b,z,k1,k2,target,hadron):
     return np.abs(self.conf[k1].widths[target])/4 + np.abs(self.conf[k2].widths[hadron])/(4*z**2)
@@ -162,37 +163,39 @@ class STFUNCS:  # creating a class of
 
 
 # Structure functions in b space Zeta prescriprion
-  def get_FX_b(self,i,x,z,Q2,pT,b,target,hadron):
-    k1=self.D[i]['k1']
-    k2=self.D[i]['k2']
-    if k1==None or k2==None: return 0
-    Q = np.sqrt(Q2)
-    mu2=Q2
-    muf=Q
-    zetaf=Q2
-    if mu2>1000: mu2 = 1000.
-    F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
-    D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
-    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.ZETA_PRESCRIPTION(muf, zetaf, x, z, b)
-    K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
-    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
-
-
-# Structure functions in b space CSS
 #  def get_FX_b(self,i,x,z,Q2,pT,b,target,hadron):
 #    k1=self.D[i]['k1']
 #    k2=self.D[i]['k2']
 #    if k1==None or k2==None: return 0
-#    #mu2=(self.mub(self.bc(b)))**2
-#    mu2=(self.mub(b))**2
 #    Q = np.sqrt(Q2)
+#    mu2=Q2
+#    muf=Q
+#    zetaf=Q2
 #    if mu2>1000: mu2 = 1000.
 #    F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
 #    D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
-#    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.get_gk(b)*np.log( (Q)/(self.conf['gk'].Q0) )
+#    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.ZETA_PRESCRIPTION(muf, zetaf, x, z, b)
 #    K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
 #    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
 
+
+# Structure functions in b space CSS
+  def get_FX_b(self,i,x,z,Q2,pT,b,target,hadron):
+    k1=self.D[i]['k1']
+    k2=self.D[i]['k2']
+    if k1==None or k2==None: return 0
+    #mu2=(self.mub(self.bc(b)))**2
+    mu2=(self.mub(b))**2
+    Q = np.sqrt(Q2)
+    if mu2>1000: mu2 = 1000.
+    #F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
+    #D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
+    F=self.conf[k1].get_ope_C(x,b,Q**4,Q**2,target,order=0)/(2*np.pi)
+    D=self.conf[k2].get_ope_C(z,b,Q**4,Q**2,hadron,order=0)/(2*np.pi*z**2)
+    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.get_gk(b)*np.log( (Q)/(self.conf['gk'].Q0) )
+    K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
+    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
+    
 # Method by Jianwei
   def get_FX_b_jianwei(self,i,x,z,Q2,pT,b,target,hadron):
       if ( b > self.conf['gk'].b_max):
