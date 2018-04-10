@@ -293,10 +293,10 @@ if __name__=='__main__':
     conf['_ppdf']=LSS(conf)
     conf['_ff']  =DSS(conf)
     
+    conf['gk']=GK(conf)
     conf['pdf']=PDF(conf)
     conf['ppdf']=PPDF(conf)
     conf['ff']=FF(conf)
-    conf['gk']=GK(conf)
     conf['Q20'] = conf['gk'].Q0**2
     conf['alphaSmode']='backward'
     conf['alphaS']=qcdlib.alphaS.ALPHAS(conf)

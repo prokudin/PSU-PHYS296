@@ -79,6 +79,7 @@ class PDF(CORE):
   def __init__(self,conf):
     self.aux=conf['aux']
     self.conf=conf
+    #print conf
     self.set_default_params()
     self.setup()
     self.forder=[0,3,1,5,7,9,10,8,6,2,4]
@@ -164,7 +165,7 @@ class PDF(CORE):
       if i!=0:   integrand=lambda xh: self.integrand_jpj(x,xh,f,bT,zetaF,mu,order)
       elif i==0: integrand=lambda xh: self.integrand_jg( x,xh,f,bT,zetaF,mu,order)
       opelst[i]=self.integrator(integrand,x,1)
-    return opelst
+    return np.asarray(opelst)
 
 class FF(CORE):
     
@@ -276,7 +277,7 @@ class FF(CORE):
         if i!=0:   integrand=lambda zh:self.integrand_jjp(z,zh,f,bT,zetaD,mu,order)
         elif i==0: integrand=lambda zh:self.integrand_gj( z,zh,f,bT,zetaD,mu,order)
         opelst[i]=z**2*self.integrator(integrand,z,1)
-    return opelst
+    return np.asarray(opelst)
 
 # class for "toy" evolution
 class GK(CORE):
