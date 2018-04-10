@@ -3,7 +3,7 @@ import sys,os
 sys.path.insert(1,'../') 
 import numpy as np
 import time
-from scipy.integrate import quad
+from scipy.integrate import quad,fixed_quad
 #from external.CJLIB.CJ import CJ
 from external.PDF.CT10 import CT10
 from external.LSSLIB.LSS import LSS
@@ -75,12 +75,35 @@ class CORE:
     return self.K[hadron]*C*gauss
 
 class PDF(CORE):
-
+    
   def __init__(self,conf):
     self.aux=conf['aux']
     self.conf=conf
     self.set_default_params()
     self.setup()
+    self.forder=[0,3,1,5,7,9,10,8,6,2,4]
+    self.method='quad'
+    self.CF = conf['aux'].CF
+    self.TF=conf['aux'].TF
+    self.gamma_E=conf['aux'].euler
+    self.C1=2*np.exp(-self.gamma_E)
+    self.bmax=self.conf['gk'].bmax
+
+  # aux functions
+  def integrator(self,f,xmin,xmax):
+    if self.method=='quad':
+      return quad(f,xmin,xmax)[0]
+    elif self.method=='gauss':
+      return fixed_quad(np.vectorize(f),xmin,xmax,n=200)[0]
+
+  def plus(self,x,xh,f):
+    return  2/(1-xh)*(f(xh)-f(1)) + 2*np.log(1-x)*f(1)/(1-x)
+
+  def bstar(self,bT,Q):
+    return bT/np.sqrt(1+bT**2/self.bmax**2)
+
+  def mub(self,bT,Q):
+    return self.C1/self.bstar(bT,Q)
 
   def set_default_params(self):
 
@@ -110,13 +133,69 @@ class PDF(CORE):
     if target=='n': C=self.p2n(C)
     return C
 
-class FF(CORE):
+  def get_C_ope(self,i,x,Q2,target='p'):
+    C=self.conf['_pdf'].get_f(x,Q2)#[self.forder]
+    if target=='n': C=self.p2n(C)
+    return C[i]
 
+  def integrand_jpj(self,x,xh,f,bT,zetaF,mu,order):
+    integrand=f(x)/(1-x)
+    if order>0:
+      alphaS=conf['alphaS'].get_alphaS(mu**2)
+      expression = 2*(np.log(2.0/(mu*bT))-self.gamma_E)*(self.plus(x,xh,lambda xh:f(x/xh)/xh)\
+            -(1+xh)*f(x/xh)/xh)+ (1-xh)/xh*f(x/xh)\
+          +( -0.5*(np.log(bT**2*mu**2)-2*(np.log(2)-self.gamma_E))**2\
+              -(np.log(bT**2*mu**2) - 2*(np.log(2)-self.gamma_E)) * np.log(zetaF/mu**2))*f(x)/(1-x)
+      integrand+=alphaS*self.CF/2.0/np.pi*expression
+    return integrand
+
+  def integrand_jg(self,x,xh,f,bT,zetaF,mu,order):
+    integrand=0
+    if order>0:
+      alphaS=conf['alphaS'].get_alphaS(mu**2)
+      integrand+=alphaS*self.TF/2.0/np.pi*(2*(1-2*xh*(1-xh))*(np.log(2.0/bT/mu)\
+        -self.gamma_E)+2*xh*(1-xh))/xh*f(x/xh)
+    return integrand
+
+  def get_ope_C(self,x,bT,zetaF,mu,target='p',order=0):
+    opelst = [0]*len(self.forder)
+    for i in range(len(self.forder)):
+      f=lambda xx: self.get_C_ope(i,xx,mu**2,target)
+      if i!=0:   integrand=lambda xh: self.integrand_jpj(x,xh,f,bT,zetaF,mu,order)
+      elif i==0: integrand=lambda xh: self.integrand_jg( x,xh,f,bT,zetaF,mu,order)
+      opelst[i]=self.integrator(integrand,x,1)
+    return opelst
+
+class FF(CORE):
+    
   def __init__(self,conf):
     self.aux=conf['aux']
     self.conf=conf
     self.set_default_params()
     self.setup()
+    self.forder=[0,3,1,5,7,9,10,8,6,2,4]
+    self.method='quad'
+    self.CF = conf['aux'].CF
+    self.TF=conf['aux'].TF
+    self.gamma_E=conf['aux'].euler
+    self.C1=2*np.exp(-self.gamma_E)
+    self.bmax=self.conf['gk'].bmax
+
+  # aux functions
+  def integrator(self,f,xmin,xmax):
+    if self.method=='quad':
+      return quad(f,xmin,xmax)[0]
+    elif self.method=='gauss':
+      return fixed_quad(np.vectorize(f),xmin,xmax,n=200)[0]
+
+  def plus(self,x,xh,f):
+    return  2/(1-xh)*(f(xh)-f(1)) + 2*np.log(1-x)*f(1)/(1-x)
+
+  def bstar(self,bT,Q):
+    return bT/np.sqrt(1+bT**2/self.bmax**2)
+
+  def mub(self,bT,Q):
+    return self.C1/self.bstar(bT,Q)
 
   def set_default_params(self):
 
@@ -166,6 +245,38 @@ class FF(CORE):
     C=self.conf['_ff'].get_f(x,Q2,hadron)
     C[0]=0 # glue is not supported
     return C
+
+  def get_C_ope(self,i,x,Q2,hadron='pi+'):
+    C=self.conf['_ff'].get_f(x,Q2,hadron)
+    return C[i]
+
+  def integrand_jjp(self,z,zh,f,bT,zetaD,mu,order):
+    integrand=1/(1-z)*f(z)/z**2
+    if order>0:
+      alphaS=conf['alphaS'].get_alphaS(mu**2)
+      expression = self.plus(z,zh,lambda zh:2*(np.log(2.0*zh/(mu*bT))-self.gamma_E)*f(z/zh)*zh)\
+          +2*(np.log(2.0*zh/(mu*bT))-self.gamma_E)*(1/zh**2+1/zh)*zh*f(z/zh)\
+          +(1/zh**2 - 1/zh)*zh*f(z/zh) + 1/(1-z)*(-0.5*(np.log(bT**2*mu**2)-2*(np.log(2)-self.gamma_E))**2\
+          -(np.log(bT**2*mu**2) - 2*(np.log(2)-self.gamma_E)) * np.log(zetaD/mu**2))*f(z)
+      integrand+=alphaS*self.CF/2.0/np.pi*expression/z**2
+    return integrand
+
+  def integrand_gj(self,z,zh,f,bT,zetaD,mu,order):
+    integrand=0
+    if order>0:
+      alphaS=conf['alphaS'].get_alphaS(mu**2)
+      integrand+=alphaS*self.CF/2.0/np.pi/zh**3*(2*(1+(1-zh)**2)*(np.log(2.0*zh/bT/mu)\
+        -self.gamma_E)+zh**2)*zh*f(z/zh)/z**2
+    return integrand
+  
+  def get_ope_C(self,z,bT,zetaD,mu,hadron='pi+',order=0):
+    opelst = [0]*len(self.forder)
+    for i in range(len(self.forder)):
+        f=lambda zz: self.get_C_ope(i,zz,mu**2,hadron)
+        if i!=0:   integrand=lambda zh:self.integrand_jjp(z,zh,f,bT,zetaD,mu,order)
+        elif i==0: integrand=lambda zh:self.integrand_gj( z,zh,f,bT,zetaD,mu,order)
+        opelst[i]=z**2*self.integrator(integrand,z,1)
+    return opelst
 
 # class for "toy" evolution
 class GK(CORE):
@@ -224,6 +335,7 @@ class PPDF(CORE):
 
 if __name__=='__main__':
 
+  import qcdlib.alphaS
   conf={}
 #  conf['path2CJ'] ='../external/CJLIB'
   conf['path2CT10'] ='../external/PDF'
@@ -232,7 +344,11 @@ if __name__=='__main__':
   conf['path2DSS']='../external/DSSLIB'
 
   conf['order']='LO'
+  conf['Q20']=1.0
+  conf['alphaSmode']='backward'
   conf['aux']=AUX()
+  conf['alphaS']=qcdlib.alphaS.ALPHAS(conf)
+  conf['gk']=GK(conf)
 #  conf['_pdf']=CJ(conf)
   conf['_pdf']=CT10(conf)
 #  conf['_ppdf']=LSS(conf)
@@ -247,10 +363,15 @@ if __name__=='__main__':
 
   x=0.15
   Q2=2.4
-  dist=['pdf','ppdf','ff']
+  dist=['pdf','ff']
   for k in dist:
     print k
     print conf[k].get_C(x,Q2)
+    b=1.0
+    Q = np.sqrt(Q2)
+    mu=conf[k].mub(b,np.sqrt(Q))
+    zeta = mu**2
+    print conf[k].get_ope_C(x,b,zeta,mu,order=1)
 
 
 
