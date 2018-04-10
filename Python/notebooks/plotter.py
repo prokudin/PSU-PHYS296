@@ -32,7 +32,8 @@ class Plotter(object):
                  raw_plot_kw=None,
                  data_plot_kw=None,
                  thy_plot_kw=None,
-                 legend_kw=None
+                 legend_kw=None,
+                 file_save=None
                  ):
         self._raw = None
         self._data = None
@@ -49,6 +50,9 @@ class Plotter(object):
         self._raw_plot_kw = None
         self._data_plot_kw = None
         self._thy_plot_kw = None
+
+        if file_save is not None:
+            self.file_save = file_save
 
         if raw is not None:
             self.raw = raw
@@ -361,6 +365,8 @@ class Plotter(object):
         ndata_colors = len(data_colors)
         thy_colors = self.thy_colors
         nthy_colors = len(thy_colors)
+        file_save = self.file_save
+        
 
         self._ax_bins = {
             (i + 1, j + 1): {
@@ -504,3 +510,5 @@ class Plotter(object):
                                       label=self.z_labs[k])
                        for k in self.z_ids]
             bigax.legend(handles=patches, **self.legend_kw)
+        if (file_save != {None}): 
+            fig.savefig(file_save)     
