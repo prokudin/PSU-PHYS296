@@ -83,7 +83,7 @@ class PDF(CORE):
     self.set_default_params()
     self.setup()
     self.forder=[0,3,1,5,7,9,10,8,6,2,4]
-    self.method='quad'
+    self.method='gauss'
     self.CF = conf['aux'].CF
     self.TF=conf['aux'].TF
     self.gamma_E=conf['aux'].euler
@@ -175,7 +175,7 @@ class FF(CORE):
     self.set_default_params()
     self.setup()
     self.forder=[0,3,1,5,7,9,10,8,6,2,4]
-    self.method='quad'
+    self.method='gauss'
     self.CF = conf['aux'].CF
     self.TF=conf['aux'].TF
     self.gamma_E=conf['aux'].euler

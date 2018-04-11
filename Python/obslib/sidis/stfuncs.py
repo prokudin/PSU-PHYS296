@@ -337,7 +337,7 @@ if __name__=='__main__':
     target='p'
     hadron='pi+' 
     
-    bT = np.logspace(-1, 0, 30)
+    bT = np.logspace(-2, 1, 30)
     pT=1.0
     FUUbCSS = [b*stfuncs.get_FX_b_css(1,x,z,Q2,pT,b,target,hadron) for b in bT]
     FUUb = [b*stfuncs.get_FX_b(1,x,z,Q2,pT,b,target,hadron) for b in bT]
