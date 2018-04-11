@@ -5,6 +5,7 @@ import math
 sys.path.append('./../../') #this appends/searches for the contents of the 
                   #the dir/folders that are two directories back
 from tools.tools import load_config
+from scipy.integrate import quad
 from external.PDF.CT10 import CT10
 #from external.CJLIB.CJ import CJ
 from external.LSSLIB.LSS import LSS
@@ -21,6 +22,7 @@ class STFUNCS:  # creating a class of
   def __init__(self,conf):
     self.aux=conf['aux']
     self.CF = conf['aux'].CF
+    self.C2=1.0
     self.conf=conf
     eu2,ed2=4/9.,1/9. 
     self.e2=[]   #open list
@@ -149,17 +151,17 @@ class STFUNCS:  # creating a class of
 
 
 # Structure functions in b space no evolution prescriprion
-#  def get_FX_b(self,i,x,z,Q2,pT,b,target,hadron):
-#    k1=self.D[i]['k1']
-#    k2=self.D[i]['k2']
-#    if k1==None or k2==None: return 0
-#    mu2=Q2
-#    if mu2>1000: mu2 = 1000.
-#    F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
-#    D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
-#    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  
-#    K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
-#    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
+  def get_FX_b(self,i,x,z,Q2,pT,b,target,hadron):
+    k1=self.D[i]['k1']
+    k2=self.D[i]['k2']
+    if k1==None or k2==None: return 0
+    mu2=Q2
+    if mu2>1000: mu2 = 1000.
+    F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
+    D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
+    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  
+    K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
+    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
 
 
 # Structure functions in b space Zeta prescriprion
@@ -178,9 +180,30 @@ class STFUNCS:  # creating a class of
 #    K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
 #    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
 
+# Perturbative evolution
+
+  def gamma(self,mu):
+    return conf['alphaS'].get_alphaS(mu**2)*self.CF/np.pi*(3.0/2.0 - 0.0)
+
+  def gamma_k(self,mu):
+    return 2*conf['alphaS'].get_alphaS(mu**2)*self.CF/np.pi
+
+  def Int_gammas(self,mu1,mu2,Q):
+    integrand=lambda mu: 1/mu*(2*self.gamma(mu)-2*np.log(Q/mu)*self.gamma_k(mu))
+    return quad(integrand,mu1,mu2)[0]
+
+  def Int_gammak(self,mu1,mu2):
+    integrand=lambda mu: 1/mu*self.gamma_k(mu)
+    return quad(integrand,mu1,mu2)[0]
+
+  def Int_gammas_ope(self,bT,Q):
+    return self.Int_gammas(self.mub(bT),self.C2*Q,Q) 
+
+  def ope_evo(self,bT,Q):
+    return self.Int_gammas_ope(bT,Q)
 
 # Structure functions in b space CSS
-  def get_FX_b(self,i,x,z,Q2,pT,b,target,hadron):
+  def get_FX_b_css(self,i,x,z,Q2,pT,b,target,hadron):
     k1=self.D[i]['k1']
     k2=self.D[i]['k2']
     if k1==None or k2==None: return 0
@@ -190,9 +213,11 @@ class STFUNCS:  # creating a class of
     if mu2>1000: mu2 = 1000.
     #F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
     #D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
-    F=self.conf[k1].get_ope_C(x,b,Q**4,Q**2,target,order=0)/(2*np.pi)
-    D=self.conf[k2].get_ope_C(z,b,Q**4,Q**2,hadron,order=0)/(2*np.pi*z**2)
-    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.get_gk(b)*np.log( (Q)/(self.conf['gk'].Q0) )
+    F=self.conf[k1].get_ope_C(x,b,Q**2,Q,target,order=1)/(2*np.pi)
+    D=self.conf[k2].get_ope_C(z,b,Q**2,Q,hadron,order=1)/(2*np.pi*z**2)
+    width=self.get_width(b,z,k1,k2,target,hadron)*b**2\
+          +self.get_gk(b)*np.log((Q)/(self.conf['gk'].Q0))\
+          +self.ope_evo(b,Q)
     K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
     return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
     
@@ -312,32 +337,28 @@ if __name__=='__main__':
     target='p'
     hadron='pi+' 
     
-    pT = np.linspace(0.01, z*np.sqrt(Q2), 30)
-    FUUquad = [stfuncs.FUU_q_quad(x,Q2,y,z,p/z,target,hadron,1e-3)[0] for p in pT]
-    #FUUfquad = [stfuncs.FUU_q_fquad(x,Q2,y,z,p/z,target,hadron,10) for p in pT]
-    FUUOgata = [stfuncs.FUU_q(x,Q2,y,z,p/z,target,hadron, Nmax = 13) for p in pT]
-    #FUUOgatafast = [stfuncs.FUU_fast(x,Q2,y,z,p/z,target,hadron) for p in pT]
-    FUUgauss = [stfuncs.get_FX(1,x,z,Q2,p,target,hadron) for p in pT]
+    bT = np.logspace(-1, 0, 30)
+    pT=1.0
+    FUUbCSS = [b*stfuncs.get_FX_b_css(1,x,z,Q2,pT,b,target,hadron) for b in bT]
+    FUUb = [b*stfuncs.get_FX_b(1,x,z,Q2,pT,b,target,hadron) for b in bT]
+    ratio = [FUUbCSS[i]/FUUb[i] for i in range(len(bT))]
     
     ax = py.subplot(121)
-    ax.plot(pT, FUUgauss, label = 'Analytic')
-    #ax.errorbar(pT, FUUfquad, [0]*len(pT), label = 'Fixed Quad')
-    ax.errorbar(pT, FUUquad, [0]*len(pT), label = 'Quad')
-    #ax.errorbar(pT, FUUOgatafast, [0]*len(pT), label = 'Ogata')
-    ax.errorbar(pT, FUUOgata, [0]*len(pT), label = 'AdOgata')
-    
-    ax.set_xlabel('p_T (GeV)', fontsize=10)
-    ax.set_ylabel('FUU(q, x=0.25, z=0.5, Q2='+str(Q2)+')', fontsize=10)
-    ax.semilogy()
+    ax.plot(bT, FUUbCSS, label = 'CSS')
+    ax.plot(bT, FUUb, label = 'Gauss')
+    ax.set_xlabel('b_T', fontsize=10)
+    ax.set_ylabel('FUU(b, x='+str(x)+', z='+str(z)+', Q2='+str(Q2)+')', fontsize=10)
+    ax.semilogx()
+    #ax.semilogy()
     ax.legend()
-    ax = py.subplot(122)
-    ax.errorbar(pT, [FUUquad[i]/FUUgauss[i] for i in range(len(pT))], [0]*len(pT), label = 'Quad/Analytic')
-    #ax.errorbar(pT, [FUUOgatafast[i]/FUUgauss[i] for i in range(len(pT))], [0]*len(pT), label = 'Ogata/Analytic')
-    ax.errorbar(pT, [FUUOgata[i]/FUUgauss[i] for i in range(len(pT))], [0]*len(pT), label = 'AdOgata/Analytic')
-    #ax.errorbar(pT, [FUUfquad[i]/FUUgauss[i] for i in range(len(pT))], [0]*len(pT), label = 'FQuad/Analytic')
-    ax.set_xlabel('p_T (GeV)', fontsize=10)
-    ax.set_ylabel('FUU ratio (q, x=0.25, z=0.5, Q2='+str(Q2)+')', fontsize=10)
-    #ax.set_ylim([0, 2])
+    ax=py.subplot(122)
+    ax.plot(bT,ratio,label='ratio')
+    
+    ax.set_xlabel('b_T', fontsize=10)
+    ax.set_ylabel('CSS/Gauss(b, x='+str(x)+', z='+str(z)+', Q2='+str(Q2)+')', fontsize=10)
+    #ax.set_ylabel('pert', fontsize=10)
+    ax.set_ylim(0, 2)
+    ax.semilogx()
     
     py.tight_layout()
     ax.legend()
