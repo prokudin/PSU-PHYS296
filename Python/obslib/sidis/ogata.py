@@ -17,7 +17,7 @@ class OGATA:
         k = fsolve(lambda k: xmax-np.pi*k*np.tanh(np.pi/2*np.sinh(h*k)), xmax)[0]
         N = int(k)
         #print 
-        print '\nogata N=',N
+        #print '\nogata N=',N
         #sys.exit()
         zeros=jn_zeros(nu,N)
         xi=zeros/np.pi

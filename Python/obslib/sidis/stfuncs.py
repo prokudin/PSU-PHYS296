@@ -151,7 +151,7 @@ class STFUNCS:  # creating a class of
 
 
 # Structure functions in b space no evolution prescriprion
-  def get_FX_b(self,i,x,z,Q2,pT,b,target,hadron):
+  def get_FX_b(self,i,x,z,Q2,pT,b,target,hadron,order):
     k1=self.D[i]['k1']
     k2=self.D[i]['k2']
     if k1==None or k2==None: return 0
@@ -165,7 +165,7 @@ class STFUNCS:  # creating a class of
 
 
 # Structure functions in b space Zeta prescriprion
-#  def get_FX_b(self,i,x,z,Q2,pT,b,target,hadron):
+#  def get_FX_b(self,i,x,z,Q2,pT,b,target,hadron,order):
 #    k1=self.D[i]['k1']
 #    k2=self.D[i]['k2']
 #    if k1==None or k2==None: return 0
@@ -199,11 +199,21 @@ class STFUNCS:  # creating a class of
   def Int_gammas_ope(self,bT,Q):
     return self.Int_gammas(self.mub(bT),self.C2*Q,Q) 
 
-  def ope_evo(self,bT,Q):
-    return self.Int_gammas_ope(bT,Q)
+  def ope_evo(self,bT,Q,order):
+    if order == 0: return 0
+    elif order == 1: return self.Int_gammas_ope(bT,Q)-2*self.Int_gammak(self.mub(bT),self.C2*self.conf['gk'].Q0)*np.log(Q/self.conf['gk'].Q0)
+
+# Hard Factor
+
+  def get_H(self,Q,order):
+    if order == 0: return 1
+    elif order == 1:
+      alphaS=conf['alphaS'].get_alphaS(Q**2)
+    #return 1+4*self.CF*(-3*np.log(self.C2)-0.5*np.log(self.C2**2)**2-4)*alphaS/(4*np.pi)
+      return 1+4*self.CF*(3*np.log(self.C2)-0.5*np.log(self.C2**2)**2-4)*alphaS/(4*np.pi)
 
 # Structure functions in b space CSS
-  def get_FX_b_css(self,i,x,z,Q2,pT,b,target,hadron):
+  def get_FX_b_css(self,i,x,z,Q2,pT,b,target,hadron,order):
     k1=self.D[i]['k1']
     k2=self.D[i]['k2']
     if k1==None or k2==None: return 0
@@ -213,11 +223,11 @@ class STFUNCS:  # creating a class of
     if mu2>1000: mu2 = 1000.
     #F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
     #D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
-    F=self.conf[k1].get_ope_C(x,b,Q**2,Q,target,order=1)/(2*np.pi)
-    D=self.conf[k2].get_ope_C(z,b,Q**2,Q,hadron,order=1)/(2*np.pi*z**2)
+    F=self.conf[k1].get_ope_C(x,self.bstar(b),mu2,np.sqrt(mu2),target,order)/(2*np.pi)
+    D=self.conf[k2].get_ope_C(z,self.bstar(b),mu2,np.sqrt(mu2),hadron,order)/(2*np.pi*z**2)
     width=self.get_width(b,z,k1,k2,target,hadron)*b**2\
           +self.get_gk(b)*np.log((Q)/(self.conf['gk'].Q0))\
-          +self.ope_evo(b,Q)
+          -self.ope_evo(b,Q,order)
     K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
     return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
     
@@ -230,30 +240,31 @@ class STFUNCS:  # creating a class of
           return 1./2.
 
 # Structure function FUU in b space
-  def FUU_b(self,x,Q2,y,z,q,b,target,hadron):
-    factor = 1.0
-    return factor*(self.get_FX_b(1,x,z,Q2,q,b,target,hadron))
+  def FUU_b(self,x,Q2,y,z,q,b,target,hadron,order=0):
+    Q = np.sqrt(Q2)
+    H = self.get_H(Q,order)
+    return H*(self.get_FX_b(1,x,z,Q2,q,b,target,hadron,order))
 
-  def FUU_q(self,x,Q2,y,z,q,target,hadron,Nmax = 13):
+  def FUU_q(self,x,Q2,y,z,q,target,hadron,order,Nmax = 13):
     nu = 0
     Q = np.sqrt(Q2)
-    w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,q,b,target,hadron))
+    w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,q,b,target,hadron,order))
     return 2*np.pi*self.ogata.adog3(w, q, nu, Nmax, Q)
 
-  def FUU_q_quad(self,x,Q2,y,z,q,target,hadron,eps = 1e-3):
+  def FUU_q_quad(self,x,Q2,y,z,q,target,hadron,order,eps = 1e-3):
     nu = 0
-    w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,q,b,target,hadron))
+    w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,q,b,target,hadron,order))
     inv = self.quad.quadinv(w, q, nu, eps)
     return 2*np.pi*inv[0], 2*np.pi*inv[1]
 
-  def FUU_q_fquad(self,x,Q2,y,z,q,target,hadron,num):
+  def FUU_q_fquad(self,x,Q2,y,z,q,target,hadron,num,order):
     nu = 0
-    w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,q,b,target,hadron))
+    w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,q,b,target,hadron,order))
     inv = self.fquad.fix_quadinv(w, q, nu, num)
     return 2*np.pi*inv#[0], 2*np.pi*inv[1]
 
-  def FUU_fast(self,x,Q2,y,z,q,target,hadron):
-    w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,q,b,target,hadron))
+  def FUU_fast(self,x,Q2,y,z,q,target,hadron,order):
+    w = np.vectorize(lambda b: b*self.FUU_b(x,Q2,y,z,q,b,target,hadron,order))
     return 2*np.pi*self.ogata_fast.invert(w,q)
 
 
@@ -337,29 +348,66 @@ if __name__=='__main__':
     target='p'
     hadron='pi+' 
     
-    bT = np.logspace(-2, 1, 30)
+    # Compare CSS and Gaussian in b space
+    bT = np.logspace(-2, 0.7, 30)
     pT=1.0
-    FUUbCSS = [b*stfuncs.get_FX_b_css(1,x,z,Q2,pT,b,target,hadron) for b in bT]
-    FUUb = [b*stfuncs.get_FX_b(1,x,z,Q2,pT,b,target,hadron) for b in bT]
+    order=0
+    ordercss=1
+    FUUbCSS = [b*stfuncs.get_FX_b_css(1,x,z,Q2,pT,b,target,hadron,ordercss) for b in bT]
+    FUUb = [b*stfuncs.get_FX_b(1,x,z,Q2,pT,b,target,hadron,order) for b in bT]
+    evo = [stfuncs.ope_evo(b,np.sqrt(Q2),ordercss) for b in bT]
     ratio = [FUUbCSS[i]/FUUb[i] for i in range(len(bT))]
     
     ax = py.subplot(121)
     ax.plot(bT, FUUbCSS, label = 'CSS')
     ax.plot(bT, FUUb, label = 'Gauss')
-    ax.set_xlabel('b_T', fontsize=10)
-    ax.set_ylabel('FUU(b, x='+str(x)+', z='+str(z)+', Q2='+str(Q2)+')', fontsize=10)
+    ax.set_xlabel('b', fontsize=10)
+    ax.set_ylabel('b FUU(b, x='+str(x)+', z='+str(z)+', Q2='+str(Q2)+')', fontsize=10)
     ax.semilogx()
-    #ax.semilogy()
+    ax.semilogy()
     ax.legend()
-    ax=py.subplot(122)
-    ax.plot(bT,ratio,label='ratio')
+#    ax=py.subplot(132)
+#    ax.plot(bT,ratio,label='ratio')
+#    
+#    ax.set_xlabel('b_T', fontsize=10)
+#    ax.set_ylabel('CSS/Gauss(b, x='+str(x)+', z='+str(z)+', Q2='+str(Q2)+')', fontsize=10)
+#    #ax.set_ylabel('pert', fontsize=10)
+#    ax.set_ylim(0, 2)
+#    ax.semilogx()
+#    
+#    ax = py.subplot(133)
+#    ax.plot(bT,evo, label='pert')
+#    ax.set_xlabel('bT', fontsize=10)
+#    ax.set_ylabel('Sudakov', fontsize = 10)
+#    ax.semilogx()
+#    
+#    py.tight_layout()
+#    ax.legend()
+#    py.show()
+
+# Compare gaussian pdf, ff to css in bspace 
+    k1=stfuncs.D[1]['k1']
+    k2=stfuncs.D[1]['k2']
+    bT = np.logspace(-2, 1, 30)
+    Q = np.sqrt(Q2)
+    zeta = lambda b: stfuncs.mub(b)**2
+    mu = lambda b: stfuncs.mub(b)
+    opeff = [stfuncs.conf[k1].get_ope_C(x,stfuncs.bstar(b),zeta(b),mu(b),target,1)[1] for b in bT]
+    gaussff = [stfuncs.conf[k1].get_C(x,mu2,target)[1] for b in bT]
+    opepdf = [stfuncs.conf[k2].get_ope_C(x,stfuncs.bstar(b),zeta(b),mu(b),hadron,1)[1] for b in bT]
+    gausspdf = [stfuncs.conf[k2].get_C(x,mu2,hadron)[1] for b in bT]
+    ffratio = [opeff[i]/gaussff[i] for i in range(len(bT))]
+    pdfratio = [opepdf[i]/gausspdf[i] for i in range(len(bT))]
+    prod = [ffratio[i]*pdfratio[i] for i in range(len(bT))]
     
-    ax.set_xlabel('b_T', fontsize=10)
-    ax.set_ylabel('CSS/Gauss(b, x='+str(x)+', z='+str(z)+', Q2='+str(Q2)+')', fontsize=10)
-    #ax.set_ylabel('pert', fontsize=10)
-    ax.set_ylim(0, 2)
+    ax = py.subplot(122)
+    ax.plot(bT,ffratio,label = 'FF')
+    ax.plot(bT,pdfratio,label='PDF')
+    ax.plot(bT,prod,label='FF*PDF')
+    ax.set_xlabel('b')
+    ax.set_ylabel(r'$TMD_{CSS}/TMD_{Gauss}$(b,x=0.25,z=0.5,Q2=2.4)')
     ax.semilogx()
-    
+    ax.legend()
+    #ax.set_ylim(-2, 2)
     py.tight_layout()
-    ax.legend()
     py.show()

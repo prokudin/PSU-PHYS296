@@ -143,6 +143,7 @@ class PDF(CORE):
     integrand=f(x)/(1-x)
     if order>0:
       alphaS=self.conf['alphaS'].get_alphaS(mu**2)
+      #alphaS = 0.0
       expression = 2*(np.log(2.0/(mu*bT))-self.gamma_E)*(self.plus(x,xh,lambda xh:f(x/xh)/xh)\
             -(1+xh)*f(x/xh)/xh)+ (1-xh)/xh*f(x/xh)\
           +( -0.5*(np.log(bT**2*mu**2)-2*(np.log(2)-self.gamma_E))**2\
@@ -153,6 +154,7 @@ class PDF(CORE):
   def integrand_jg(self,x,xh,f,bT,zetaF,mu,order):
     integrand=0
     if order>0:
+      #alphaS = 0.0
       alphaS=self.conf['alphaS'].get_alphaS(mu**2)
       integrand+=alphaS*self.TF/2.0/np.pi*(2*(1-2*xh*(1-xh))*(np.log(2.0/bT/mu)\
         -self.gamma_E)+2*xh*(1-xh))/xh*f(x/xh)
@@ -254,6 +256,7 @@ class FF(CORE):
   def integrand_jjp(self,z,zh,f,bT,zetaD,mu,order):
     integrand=1/(1-z)*f(z)/z**2
     if order>0:
+      #alphaS=0.0
       alphaS=self.conf['alphaS'].get_alphaS(mu**2)
       expression = self.plus(z,zh,lambda zh:2*(np.log(2.0*zh/(mu*bT))-self.gamma_E)*f(z/zh)*zh)\
           +2*(np.log(2.0*zh/(mu*bT))-self.gamma_E)*(1/zh**2+1/zh)*zh*f(z/zh)\
@@ -265,6 +268,7 @@ class FF(CORE):
   def integrand_gj(self,z,zh,f,bT,zetaD,mu,order):
     integrand=0
     if order>0:
+      #alphaS=0.0
       alphaS=self.conf['alphaS'].get_alphaS(mu**2)
       integrand+=alphaS*self.CF/2.0/np.pi/zh**3*(2*(1+(1-zh)**2)*(np.log(2.0*zh/bT/mu)\
         -self.gamma_E)+zh**2)*zh*f(z/zh)/z**2
