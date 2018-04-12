@@ -35,14 +35,14 @@ conf['path2DSS']='../external/DSSLIB'
 conf['params']={}
 
 conf['params']['pdf']={}
-conf['params']['pdf']['widths0 valence']  = {'value':<<    2.62111526535736771848e-01>>,'fixed':False,'min':0,'max':10}
-conf['params']['pdf']['widths0 sea']      = {'value':<<    4.54546309613160559593e-01>>,'fixed':False,'min':0,'max':10}
+conf['params']['pdf']['widths0 valence']  = {'value':<<    2.77667497783078254248e-01>>,'fixed':False,'min':0,'max':10}
+conf['params']['pdf']['widths0 sea']      = {'value':<<    3.95234391970270659833e-01>>,'fixed':False,'min':0,'max':10}
 
 conf['params']['ff']={}
-conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    2.11195846199639658547e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    1.93054237855291910275e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 k+ fav']    = {'value':<<    2.98635175670050156960e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 k+ unfav']  = {'value':<<    1.38449119642011064801e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    2.09500872605350968447e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    1.93429413623642132425e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 k+ fav']    = {'value':<<    2.95045787677128745763e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 k+ unfav']  = {'value':<<    1.60583180020037213920e-01>>,'fixed':False,'min':0,'max':1}
 
 conf['params']['gk']={}
 conf['params']['gk']['g2']   = {'value':<<    0.00000000000000000000e+00>>,'fixed':False,'min':0,'max':10}
@@ -70,9 +70,10 @@ conf['datasets']['sidis']['filters'][0]['idx']=[1000,1001,1004,1005,1002,1003,10
 #conf['datasets']['sidis']['filters'][0]['filter']="z>0.2 and z<0.6 and Q2>1.69 and (pT/z)**2<0.25*Q2 and 2*yh<-0.69" # R filter exp(2 yh)<0.5 npts    = 368 chi2    = 589.505730
 #conf['datasets']['sidis']['filters'][0]['filter']="z>0.2 and z<0.6 and Q2>1.69 and  pT>0.2 and pT<0.9" # no R filter npts    = 807 chi2    = 932.408505 
 #conf['datasets']['sidis']['filters'][0]['filter']="z>0.2 and z<0.6 and Q2>1.69 and (pT/z)**2<0.25*Q2 and yp-yh>2." # rapidity difference npts    = 481 chi2 = 683.694846    = 683.694846
-conf['datasets']['sidis']['filters'][0]['filter']="z>0.2 and z<0.6 and Q2>1.69 and (pT/z)**2<0.15*Q2 and yp-yh>3." # rapidity difference npts    = 481 chi2 = 683.694846    = 683.694846
+#conf['datasets']['sidis']['filters'][0]['filter']="z>0.2 and z<0.6 and Q2>1.69 and (pT/z)**2<0.15*Q2 and yp-yh>3." # rapidity difference npts    = 481 chi2 = 683.694846    = 683.694846
 #conf['datasets']['sidis']['filters'][0]['filter']="z<0.6 and Q2>1.69 and (pT/z)**2<0.25*Q2 and yp-yh>0." #npts    = 513 chi2    = 722.943137
 #conf['datasets']['sidis']['filters'][0]['filter']="z<0.6 and Q2>1.69 and pT>0.2 and pT<0.9" # npts    = 978 chi2    = 1145.231816
+conf['datasets']['sidis']['filters'][0]['filter']="z<0.6 and Q2>1.69 and (pT/z)**2<0.15*Q2 and yp-yh>3." # rapidity difference npts    = 216 chi2    = 298.712286
 
 conf['datasets']['sidis']['xlsx']={}
 
