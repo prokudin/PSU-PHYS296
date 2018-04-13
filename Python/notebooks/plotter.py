@@ -50,6 +50,7 @@ class Plotter(object):
         self._data_plot_kw = None
         self._thy_plot_kw = None
 
+ 
         if raw is not None:
             self.raw = raw
 
@@ -361,7 +362,8 @@ class Plotter(object):
         ndata_colors = len(data_colors)
         thy_colors = self.thy_colors
         nthy_colors = len(thy_colors)
-
+        
+        
         self._ax_bins = {
             (i + 1, j + 1): {
                 "Q2": (q2_bins[-i - 2], q2_bins[-i - 1]),
@@ -431,7 +433,7 @@ class Plotter(object):
         for i in range(nrows):
             for j in range(ncols):
                 ax = axs[i, j]
-
+                #ax.set_ylims([10^(-3), 100.])
                 if (i, j) not in raw_slices:  # If there's nothing to plot
                     ax.set_axis_off()
                     continue
@@ -494,6 +496,7 @@ class Plotter(object):
                             data_z["thy"],
                             color=thy_colors[k % nthy_colors],
                             **self.thy_plot_kw)
+                    
 
                 ax.relim()
                 ax.autoscale_view()
@@ -503,3 +506,4 @@ class Plotter(object):
                                       label=self.z_labs[k])
                        for k in self.z_ids]
             bigax.legend(handles=patches, **self.legend_kw)
+             
