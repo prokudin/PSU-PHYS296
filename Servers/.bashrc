@@ -10,11 +10,13 @@ fi
 
 # User specific aliases and functions
 
-export PYTHONPATH=$PYTHONPATH:/opt/anaconda2/lib
+#export PYTHONPATH=$PYTHONPATH:/opt/anaconda2/lib/python2.7/site-packages/
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/anaconda2/lib
+export LD_LIBRARY_PATH=/opt/anaconda2/lib:$LD_LIBRARY_PATH
 
-export PATH=$PATH:/opt/anaconda2/bin
+source /usr/local/bin/thisroot.sh
 
-alias python=/opt/anaconda2/bin/python
-alias f2py=/opt/anaconda2/bin/f2py
+export PATH=/opt/anaconda2/bin/:$PATH
+
+#alias python=/opt/anaconda2/bin/python
+#alias f2py=/opt/anaconda2/bin/f2py
