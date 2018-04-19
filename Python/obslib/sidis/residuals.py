@@ -16,11 +16,11 @@ from qcdlib.tmdlib import PDF,PPDF,FF,GK
 from qcdlib.aux import AUX
 from qcdlib.alphaS import ALPHAS
 from obslib.dis.stfuncs import STFUNCS as DIS_STFUNCS
+from tools.config import conf
 
 class RESIDUALS(_RESIDUALS):
 
-  def __init__(self,conf):
-    self.conf=conf
+  def __init__(self):
     self.reaction='sidis'
     self.tabs=conf['sidis tabs']
     self.stfuncs=conf['sidis stfuncs']

@@ -1,24 +1,20 @@
-#!/usr/bin/env python
-import sys,os
+import os
 import numpy as np
-from tools.tools import load,save,checkdir,load_config
-from tools.bar import BAR
-from nest import NEST
-from imc import IMC
-import pandas as pd
-import itertools as it
-import json
+from tools.tools import load,save,checkdir
+from tools.config import conf
+from multiprocessing import Process,Queue,Pool,Pipe
+import nest
 
 class MCSAMP:
-
-  def __init__(self,conf):
-    self.conf=conf
+    
+  def __init__(self):
+      pass
 
   def get_residuals(self,par):
-    res,rres,nres=self.conf['resman'].get_residuals(par)
+    res,rres,nres=conf['resman'].get_residuals(par)
     if len(rres)!=0: res=np.append(res,rres)
     if len(nres)!=0: res=np.append(res,nres)
-    return res 
+    return res
 
   def loglike(self,par):
     return -0.5*np.sum(self.get_residuals(par)**2)
@@ -27,188 +23,227 @@ class MCSAMP:
     res=self.get_residuals(par)
     return 0.5*(np.sum(res**2)-res.size)
 
-  def likelihood(self,par):
-    res=self.get_residuals(par)
-    return np.exp(-0.5*(np.sum(res**2)-res.size))
-
   def linmap(self,q,pmin,pmax): 
     return (pmax-pmin)*q+pmin 
 
   def get_par_lims(self):
     plims=[]
-    for i in range(len(self.conf['parman'].order)):
-      ii,k,kk=self.conf['parman'].order[i]
+    for i in range(len(conf['parman'].order)):
+      ii,k,kk=conf['parman'].order[i]
       if ii==1:
-        pmin=self.conf['params'][k][kk]['min']
-        pmax=self.conf['params'][k][kk]['max']
+        pmin=conf['params'][k][kk]['min']
+        pmax=conf['params'][k][kk]['max']
       elif ii==2:
-        pmin=self.conf['datasets'][k]['norm'][kk]['min']
-        pmax=self.conf['datasets'][k]['norm'][kk]['max']
+        pmin=conf['datasets'][k]['norm'][kk]['min']
+        pmax=conf['datasets'][k]['norm'][kk]['max']
       plims.append([pmin,pmax])
     return plims
 
-  def run_nest(self):
+  def _run(self):
 
-    inputfile=self.conf['args'].config
-    run_id=inputfile.replace('inputs/','')
-    outputdir='outputs/%s'%run_id.replace('.py','')
+    # construct workname
+    workname=conf['args'].config.split('/')[-1].replace('.py','')
+    outputdir='%s/outputs/%s'%(conf['args'].outdir,workname)
     checkdir(outputdir)
-    os.system('cp %s %s/'%(inputfile,outputdir))
 
-    self.npar=len(self.conf['parman'].par)
-    par=self.conf['parman'].par
+    # cp the inputfile to outputdir
+    os.system('cp %s %s/'%(conf['args'].config,outputdir))
+
+    self.npar=len(conf['parman'].par)
+    conf['nll'] = self.nll
+    conf['par lims'] = self.get_par_lims()
+    if tol not in conf:
+      conf['tol']=1e-10
+    conf['num points'] = int(self.npar*2)
+    conf['method']='cov'
+    conf['kappa']=1
+    conf['sample size']= 1000
+
+    checkdir('mcdata')
+    par=conf['parman'].par
     res=self.get_residuals(par)
+    conf['data size']=len(res) 
+    results=nest.NEST().run()
+    save(results,'%s/nest%d'%(outputdir,conf['args'].idx))
 
-    conf={}
-    if self.conf['args'].file!='':
-      conf['nestout']=load(self.conf['args'].file)
+  def single_run(self,path,factor,tol=1e-10):
 
+    self.npar=len(conf['parman'].par)
     conf['nll'] = self.nll
     conf['par lims'] = self.get_par_lims()
-    conf['method']=self.conf['method']
-    conf['kappa']=self.conf['kappa']
-    conf['tol']=self.conf['tol']
-    conf['num points'] = self.conf['num points']
-    conf['sample size']= self.conf['sample size']
-    conf['burn size']= self.conf['burn size']
-    conf['data size']=len(res)
-    nest=NEST(conf).run()
-    save(nest,'%s/nest%d'%(outputdir,self.conf['args'].runid))
+    conf['tol']=tol
+    conf['num points'] = int(self.npar*factor)
+    conf['method']='cov'
+    conf['kappa']=1
+    conf['sample size']= 1000
 
-  def run_imc(self):
+    par=conf['parman'].par
+    res=self.get_residuals(par)
+    conf['data size']=len(res) 
+    results=nest.NEST().run()
+    save(results,path)
 
-    inputfile=self.conf['args'].config
-    run_id=inputfile.replace('inputs/','')
-    outputdir='outputs/%s'%run_id.replace('.py','')
+  def run(self,path=None,size=10,factor=4):
+
+    if 'size' in conf: size=conf['size']
+    if 'factor' in conf: factor=conf['factor']
+
+    if 'args' in conf:
+      outputdir='%s/mcdata'%conf['args'].config.split('/')[-1].replace('.py','')
+    elif path!=None:
+      outputdir='%s/mcdata'%path
+    else:
+      outputdir='mcdata'
+
     checkdir(outputdir)
-    os.system('cp %s %s/'%(inputfile,outputdir))
+    idx=[int(x.replace('.dat','')) for x in os.listdir(outputdir)]
 
-    self.npar=len(self.conf['parman'].par)
+    if len(idx)==0:
+        nruns=range(size)
+    else:
+        ini=np.amax(idx)+1
+        nruns=range(ini,ini+size)
+        
+    P = [Process(target=self.single_run, args=('%s/%i.dat'%(outputdir,i),factor,)) for i  in nruns]
+    for p in P: p.start()
+    for p in P: p.join()
 
-    conf={}
-    conf['nll'] = self.nll
-    conf['par lims'] = self.get_par_lims()
-    conf['kappa']=1.1
-    conf['tol']=10e-10
-    conf['num points'] = 50
-    imc=IMC(conf).run()
-    save(imc,'%s/nest%d'%(outputdir,self.conf['args'].runid))
+  def get_MC_samples(self,mcpath):
+    F=os.listdir(mcpath)
+    data=[]
+    for f in F: data.append(load('%s/%s'%(mcpath,f)))
+        
+    samples=[] 
+    likelihoods=[]
+    n=0
+    for d in data:
+        for p in d['samples']: samples.append(p)
+        likelihoods.extend(d['l'])
+        n+=len(d['active nll'])
+
+    samples=np.array(samples)
+    likelihoods=np.array(likelihoods)
+    I=np.argsort(likelihoods)[::-1]
+    x=np.array([((n-1.)/n)**i for i in range(len(likelihoods)+1)])
+    dx=(0.5*(x[:-1]-x[1:]))[::-1]
+    x=x[::-1]    
+    likelihoods=likelihoods[I]
+    samples=samples[I]
+    weights=np.array([likelihoods[i]*dx[i] for i in range(dx.size)])
+    weights/=np.sum(weights)
+
+    weights2=np.array([weights[i] for i in range(weights.size) if weights[i]>1e-4])
+    samples2=np.array([samples[i] for i in range(len(weights)) if weights[i]>1e-4])
+    weights2/=np.sum(weights2)
+
+    
+    print 'runs max likelihoods'
+    for d in data: print d['active nll'][0]
+    
+    print 'sample  size=',weights.size
+    print 'sample2 size=',weights2.size
+    
+    out={}
+    out['samples']=samples
+    out['weights']=weights
+    out['samples2']=samples2
+    out['weights2']=weights2
+    out['order']=conf['parman'].order
+    out['runs']={}
+    cnt=0
+    for d in data:
+        out['runs'][cnt]={'samples':d['samples'],'weights':d['weights']}
+        cnt+=1
+    return out
+
+  def get_stat(self,w,F):
+    F=np.array(F)
+    #ibest=np.argmax(w)
+    #f0=F[ibest]
+    f0=np.einsum('i,ij->j',w,F)
+  
+    df2min=[]
+    for i in range(f0.size):
+      K  = [k for k in range(len(F))  if F[k][i]<=f0[i]]
+      fi = [F[k][i] for k in K]
+      wi = [w[k] for k in K]
+      fi = np.append(fi,[f0[i]+(f0[i]-f) for f in fi])
+      wi = np.append(wi,[w[k] for k in K])
+      wi = wi/np.sum(wi)  
+      df2min.append(np.einsum('i,i',wi,(fi-f0[i])**2))
+    dfmin=np.array(df2min)**0.5
+    
+    df2max=[]
+    for i in range(f0.size):
+      K  = [k for k in range(len(F))  if F[k][i]>f0[i]]
+      fi = [F[k][i] for k in K]
+      wi = [w[k] for k in K]
+      fi = np.append(fi,[f0[i]-(f-f0[i]) for f in fi])
+      wi = np.append(wi,[w[k] for k in K])
+      wi = wi/np.sum(wi)  
+      df2max.append(np.einsum('i,i',wi,(fi-f0[i])**2))
+    dfmax=np.array(df2max)**0.5
+  
+    return {'f0':f0,'dfmin':dfmin,'dfmax':dfmax}
 
   # analysis routines. Use analysis as the gate
 
   def analysis(self):
-    self.get_dvt()
+    self.gen_report()
+    #self.check_snapshot()
 
-  def get_dvt(self):
-    resman=self.conf['resman']
-    inputfile=self.conf['args'].config
-    run_id=inputfile.replace('inputs/','')
-    outputdir='outputs/%s'%run_id.replace('.py','')
+  def gen_report(self):
+    inputfile=conf['args'].config
+    nestfile=conf['args'].fname
+    nestout=load(nestfile)
+    weight=nestout['weights'][0]
+    q=nestout['samples'][0]
+    self.get_residuals(q)
+    report=conf['resman'].gen_report(verb=1,level=1)
+    save(report,'report')
 
-    def get_RAW():
-      RAW={}
-      for k in self.conf['datasets']: 
-        RAW[k]={}
-        for kk in self.conf['datasets'][k]['xlsx']: 
-          RAW[k][kk]=[]
-      return RAW
 
-    for i in range(10):
-      # load nestfile
-      nest=load('%s/nest%d'%(outputdir,i))
-      # cut parameters that wont contribute
-      wmin_cut=1e-7
-      weights=[nest['weights'][j] for j in range(len(nest['weights'])) if nest['weights'][j]>wmin_cut]
-      samples=[nest['samples'][j] for j in range(len(nest['weights'])) if nest['weights'][j]>wmin_cut]
-      weights/=np.sum(weights)
+    L=open(inputfile).readlines()
+    for i in range(len(L)):
 
-      THY=get_RAW()
-      RES=get_RAW()
-      bar=BAR('gen chi2 values for nest%d'%i,len(samples))
-      for ii in range(len(samples)):
-        par=samples[ii]
-        resman.get_residuals(par)
-        for k in RES:
-          if k=='sidis': 
-            for kk in RES[k]: 
-              THY[k][kk].append(np.copy(resman.sidisres.tabs[kk]['thy']))
-              RES[k][kk].append(np.copy(resman.sidisres.tabs[kk]['residuals']))
-          if k=='moments': 
-            for kk in RES[k]:
-              THY[k][kk].append(np.copy(resman.momres.tabs[kk]['thy']))
-              RES[k][kk].append(np.copy(resman.momres.tabs[kk]['residuals']))
-        bar.next()
-      bar.finish()
-      RAW={'THY':THY,'RES':RES}
-      save(RAW,'%s/raw%d'%(outputdir,i))
+      if L[i].startswith('#'): continue
 
-  def simulation(self):
-    resman=self.conf['resman']
-    inputfile=self.conf['args'].config
-    nestfile=self.conf['args'].file
-    List=[int(idx) for idx in self.conf['args'].list]
-    reaction=self.conf['args'].reaction
-    
-    nest=load(nestfile)
-    par=nest['samples'][0]
-    resman.get_residuals(par)
+      if 'params' in L[i] and '<<' in L[i]:
+        l=L[i].split('=')[0].replace('conf','').replace("'",'')
+        k,kk=l.replace('][','@').replace('[','').replace(']','').split('@')[1:]
+        left=L[i].split('<<')[0]
+        right=L[i].split('>>')[1]
+        L[i]=left+'<<%30.20e>>'%conf['params'][k.strip()][kk.strip()]['value']+right
 
-    if reaction=='sidis':
-      for k in List:
-        npts=resman.sidisres.tabs[k]['value'].size
-        resman.sidisres.tabs[k]['value']=resman.sidisres.tabs[k]['thy']+np.random.randn(npts)*resman.sidisres.tabs[k]['alpha']
-        tab=pd.DataFrame(resman.sidisres.tabs[k])
-        writer = pd.ExcelWriter(self.conf['datasets'][reaction]['xlsx'][k])
-        tab.to_excel(writer,'Sheet1')
-        writer.save()
-    else:
-      raise ValueError('reaction not supported for simulation. revise MCSAMP.simulation @ mcsamp.py')
+      if 'norm' in L[i] and '<<' in L[i]:
+        l=L[i].split('=')[0].replace('conf','').replace("'",'')
+        dum1,k,dum2,kk=l.replace('][','@').replace('[','').replace(']','').split('@')
+        left=L[i].split('<<')[0]
+        right=L[i].split('>>')[1]
 
-  def simulation2(self):
-    resman=self.conf['resman']
-    inputfile=self.conf['args'].config
-    nestfile=self.conf['args'].file
-    
-    nest=load(nestfile)
-    par=nest['samples'][0]
-    resman.conf['parman'].set_new_params(par)
+        value=conf['datasets'][k.strip()]['norm'][int(kk)]['value']
+        L[i]=left+'<<%30.20e>>'%value+right
 
-    data={}
-    data['model']="WW+Gaussian"
-    data['particle']="pi+"
-    data['target']="p"
-    data['varialves']=["Fuu"]
-    data['axis']=[]
-    data['axis'].append({ "name": "a", "bins":  40, "min":  0.025, "max":   0.995, "scale":"arb" ,"description":"Bjorken x"})
-    data['axis'].append({ "name": "b", "bins":  40, "min":  0.95,  "max":    20.0, "scale":"arb", "description":"Q^2"},)
-    data['axis'].append({ "name": "c", "bins":  40, "min":  0.025, "max":   0.995, "scale":"lin", "description":"hadron frac. energy z"},)
-    data['axis'].append({ "name": "d", "bins":  40, "min":  0.00,  "max":    2.00, "scale":"lin", "description":"transverse momentum PT"})
+    F=open(inputfile,'w')
+    F.writelines(L)
+    F.close()
 
-    Tab=json.dumps(data)
-    Tab=["#!"+Tab]
+  def check_snapshot(self):
+    self.npar=len(conf['parman'].par)
+    conf={}
+    conf['nll'] = self.nll
+    conf['par lims'] = self.get_par_lims()
+    conf['num points'] = self.npar * conf['num points factor']
+    conf['snapshot']=conf['args'].snapshot
+    nest=NEST(conf)
+    par=nest.samples_p[-1]
+    self.get_residuals(par)
+    report=self.conf['resman'].gen_report(verb=1,level=1)
+    save(report,'report')
 
-    bin_center = lambda xmin,xmax,n: np.array([xmin + (2*i+1)*(xmax-xmin)/(2*n) for i in range(n)])
 
-    X =bin_center(data['axis'][0]['min'],data['axis'][0]['max'],data['axis'][0]['bins'])
-    Q2=bin_center(data['axis'][1]['min'],data['axis'][1]['max'],data['axis'][1]['bins'])
-    Z =bin_center(data['axis'][2]['min'],data['axis'][2]['max'],data['axis'][2]['bins'])
-    PT=bin_center(data['axis'][3]['min'],data['axis'][3]['max'],data['axis'][3]['bins'])
 
-    I=range(X.size)
-    print 
-    bar=BAR('generating json file',X.size**4)
-    for item in it.product(I,I,I,I):
-      iX,iQ2,iZ,iPT=item
-      Fuu=resman.sidisres.stfuncs.get_FX(1,X[iX],Z[iZ],Q2[iQ2],PT[iPT],data['target'],data['particle'])
-      row='%d '*4+' %f %f %f %f %f '
-      row=row%(iX,iQ2,iZ,iPT,Fuu,X[iX],Z[iZ],Q2[iQ2],PT[iPT])
-      Tab.append(row)
-      bar.next()
-    bar.finish()
-    print '\nsaving...'
-    Tab=[row+'\n' for row in Tab]
-    f = open("eva-stf.json",'w')
-    f.writelines(Tab)
-    f.close()
+
+
 
 

@@ -3,10 +3,11 @@ import sys,os;
 #sys.path.insert(1,'../') 
 from aux import AUX
 import numpy as np
+from tools.config import conf
 
 class ALPHAS:
 
-  def __init__(self,conf):
+  def __init__(self):
     self.aux=conf['aux']
 
     if   conf['order']=='LO':  self.order=0
@@ -87,7 +88,7 @@ if __name__=='__main__':
   conf['scheme']='ZMVFS'
   conf['Q20'] = 1.0
   conf['aux']=AUX()
-  aS=ALPHAS(conf)
+  aS=ALPHAS()
 
   print '========================'
   print 'test alphaS evolution'

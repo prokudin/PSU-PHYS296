@@ -35,14 +35,14 @@ conf['path2DSS']='../external/DSSLIB'
 conf['params']={}
 
 conf['params']['pdf']={}
-conf['params']['pdf']['widths0 valence']  = {'value':<<    2.77667497783078254248e-01>>,'fixed':False,'min':0,'max':10}
-conf['params']['pdf']['widths0 sea']      = {'value':<<    3.95234391970270659833e-01>>,'fixed':False,'min':0,'max':10}
+conf['params']['pdf']['widths0 valence']  = {'value':<<    2.77705251528844954123e-01>>,'fixed':False,'min':0,'max':10}
+conf['params']['pdf']['widths0 sea']      = {'value':<<    3.94967980710180022186e-01>>,'fixed':False,'min':0,'max':10}
 
 conf['params']['ff']={}
-conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    2.09500872605350968447e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    1.93429413623642132425e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 k+ fav']    = {'value':<<    2.95045787677128745763e-01>>,'fixed':False,'min':0,'max':1}
-conf['params']['ff']['widths0 k+ unfav']  = {'value':<<    1.60583180020037213920e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ fav']   = {'value':<<    2.09498242596438677410e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 pi+ unfav'] = {'value':<<    1.93434142836999833914e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 k+ fav']    = {'value':<<    2.95037910652280688240e-01>>,'fixed':False,'min':0,'max':1}
+conf['params']['ff']['widths0 k+ unfav']  = {'value':<<    1.60644396288401047901e-01>>,'fixed':False,'min':0,'max':1}
 
 conf['params']['gk']={}
 conf['params']['gk']['g2']   = {'value':<<    0.00000000000000000000e+00>>,'fixed':False,'min':0,'max':10}

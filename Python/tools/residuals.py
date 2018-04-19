@@ -5,6 +5,7 @@ import time
 from numpy.random import choice,randn
 from multiproc import MULTIPROC
 import pandas as pd
+from config import conf
 
 class _RESIDUALS:
 
@@ -48,29 +49,29 @@ class _RESIDUALS:
       if len(norm)>1:
         raise ValueError('ERR: more than one normalization found at'%(k,kk))
       elif len(norm)==1:
-        if self.conf['datasets'][self.reaction]['norm'][k]['fixed']==False:
+        if conf['datasets'][self.reaction]['norm'][k]['fixed']==False:
           dN=self.tabs[k][norm[0]][0]/self.tabs[k]['value'][0]
-          self.conf['datasets'][self.reaction]['norm'][k]['dN']=dN
+          conf['datasets'][self.reaction]['norm'][k]['dN']=dN
 
   def setup_rparams(self):
-    if 'rparams' not in self.conf: 
-      self.conf['rparams']={}
-    if self.reaction not in self.conf['rparams']: 
-      self.conf['rparams'][self.reaction]={}
+    if 'rparams' not in conf: 
+      conf['rparams']={}
+    if self.reaction not in conf['rparams']: 
+      conf['rparams'][self.reaction]={}
     for k in self.tabs:
-      if k not in self.conf['rparams'][self.reaction]:
-        self.conf['rparams'][self.reaction][k]={}
+      if k not in conf['rparams'][self.reaction]:
+        conf['rparams'][self.reaction][k]={}
       corr = [x for x in self.tabs[k] if '_c' in x and '%' not in x]
       for c in corr: 
-        self.conf['rparams'][self.reaction][k][c]={'value':0.0,'registered':False}
+        conf['rparams'][self.reaction][k][c]={'value':0.0,'registered':False}
 
   def prepare_multiprocess(self):
     data=[]
     for k in self.tabs:
       for i in range(len(self.tabs[k]['value'])):
         data.append([k,i])
-    if 'ncpus' in self.conf:
-      ncpus=self.conf['ncpus']
+    if 'ncpus' in conf:
+      ncpus=conf['ncpus']
     else: 
       ncpus=1
     self.mproc=MULTIPROC(ncpus,self._get_theory,data)
@@ -83,7 +84,7 @@ class _RESIDUALS:
       npts=len(self.tabs[k][key])
       tab[k]['iT']=np.zeros(npts)
       if npts>5:
-        nptsT = int(self.conf['training frac']*npts)
+        nptsT = int(conf['training frac']*npts)
         iT=choice(npts,nptsT,replace=False)
         for i in iT: tab[k]['iT'][i]=1       
 
@@ -95,10 +96,10 @@ class _RESIDUALS:
 
   def setup_imc(self):
     # only useful for IMC
-    if 'cross-validation' in self.conf:
-      if self.conf['cross-validation']: self.select_training_sets()
-    if 'bootstrap' in self.conf:
-        if self.conf['bootstrap']: self.resample()
+    if 'cross-validation' in conf:
+      if conf['cross-validation']: self.select_training_sets()
+    if 'bootstrap' in conf:
+        if conf['bootstrap']: self.resample()
 
   # master setup
 
@@ -116,7 +117,7 @@ class _RESIDUALS:
   def _get_residuals(self,k):
     npts=len(self.tabs[k]['value'])
     exp=self.tabs[k]['value']
-    norm=self.conf['datasets'][self.reaction]['norm'][k]['value']
+    norm=conf['datasets'][self.reaction]['norm'][k]['value']
     thy=self.tabs[k]['thy']/norm
     alpha=self.tabs[k]['alpha']
     corr = [x for x in self.tabs[k] if '_c' in x and '%' not in x and 'norm' not in x]
@@ -138,7 +139,7 @@ class _RESIDUALS:
       r=np.einsum('ij,j->i',np.linalg.inv(A),B)
       shift=np.einsum('k,ki->i',r,beta)
       for i in range(ncorr):
-        self.conf['rparams'][self.reaction][k][corr[i]]['value']=r[i]
+        conf['rparams'][self.reaction][k][corr[i]]['value']=r[i]
       self.tabs[k]['N']=N
       self.tabs[k]['residuals']=(exp-shift-thy)/alpha
       self.tabs[k]['shift']=shift
@@ -146,13 +147,13 @@ class _RESIDUALS:
 
   def _get_rres(self,k):
     rres=[]
-    rparams=self.conf['rparams'][self.reaction][k]
+    rparams=conf['rparams'][self.reaction][k]
     for c in rparams:
       rres.append(rparams[c]['value'])
     return np.array(rres)
 
   def _get_nres(self,k):
-    norm=self.conf['datasets'][self.reaction]['norm'][k]
+    norm=conf['datasets'][self.reaction]['norm'][k]
     if 'dN' in norm:
       return (norm['value']-1)/norm['dN']
     else:
@@ -209,19 +210,19 @@ class _RESIDUALS:
 
     if level==1:
       L.append('-'*100)  
-      for k in self.conf['sidistab']:
-        if len(self.conf['sidistab'][k].index)==0: continue 
-        for i in range(len(self.conf['sidistab'][k].index)):
-          x=self.conf['sidistab'][k]['x'].values[i]
-          obs=self.conf['sidistab'][k]['obs'].values[i]
-          Q2=self.conf['sidistab'][k]['Q2'].values[i]
-          res=self.conf['sidistab'][k]['residuals'].values[i]
-          thy=self.conf['sidistab'][k]['thy'].values[i]
-          exp=self.conf['sidistab'][k]['value'].values[i]
-          alpha=self.conf['sidistab'][k]['alpha'].values[i]
-          rres=self.conf['sidistab'][k]['r-residuals'].values[i]
-          col=self.conf['sidistab'][k]['col'].values[i]
-          shift=self.conf['sidistab'][k].Shift.values[i]
+      for k in conf['sidistab']:
+        if len(conf['sidistab'][k].index)==0: continue 
+        for i in range(len(conf['sidistab'][k].index)):
+          x=conf['sidistab'][k]['x'].values[i]
+          obs=conf['sidistab'][k]['obs'].values[i]
+          Q2=conf['sidistab'][k]['Q2'].values[i]
+          res=conf['sidistab'][k]['residuals'].values[i]
+          thy=conf['sidistab'][k]['thy'].values[i]
+          exp=conf['sidistab'][k]['value'].values[i]
+          alpha=conf['sidistab'][k]['alpha'].values[i]
+          rres=conf['sidistab'][k]['r-residuals'].values[i]
+          col=conf['sidistab'][k]['col'].values[i]
+          shift=conf['sidistab'][k].Shift.values[i]
           if res<0: chi2=-res**2
           else: chi2=res**2
           msg='%7s %7s x=%10.3e Q2=%10.3e exp=%10.3e alpha=%10.3e thy=%10.3e shift=%10.3e chi2=%10.3f'

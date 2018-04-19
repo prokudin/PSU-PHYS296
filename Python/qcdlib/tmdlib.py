@@ -11,6 +11,7 @@ from external.DSSLIB.DSS import DSS
 from external.GRSVLIB.GRSV import GRSV
 from aux import AUX
 from scipy.special import gamma
+from tools.config import conf
 
 class CORE:
 
@@ -54,9 +55,9 @@ class CORE:
     return gamma(a)*gamma(b)/gamma(a+b)
 
   def get_shape(self,x,p):
-    if self.conf['shape']==0:
+    if conf['shape']==0:
        return  p[0]*x**p[1]*(1-x)**p[2]*(1+p[3]*x+p[4]*x**2)
-    elif self.conf['shape']==1:
+    elif conf['shape']==1:
        norm=self.beta(1+p[1],p[2]+1)+p[3]*self.beta(1+p[1]+1,p[2]+1)+p[4]*self.beta(1+p[1]+2,p[2]+1)
        return  p[0]*x**p[1]*(1-x)**p[2]*(1+p[3]*x+p[4]*x**2)/norm
 
@@ -76,9 +77,8 @@ class CORE:
 
 class PDF(CORE):
     
-  def __init__(self,conf):
+  def __init__(self):
     self.aux=conf['aux']
-    self.conf=conf
     #print conf
     self.set_default_params()
     self.setup()
@@ -88,7 +88,7 @@ class PDF(CORE):
     self.TF=conf['aux'].TF
     self.gamma_E=conf['aux'].euler
     self.C1=2*np.exp(-self.gamma_E)
-    self.bmax=self.conf['gk'].bmax
+    self.bmax= conf['gk'].bmax
 
   # aux functions
   def integrator(self,f,xmin,xmax):
@@ -129,20 +129,20 @@ class PDF(CORE):
     self.widths['n']=self.p2n(self.widths['p'])
 
   def get_C(self,x,Q2,target='p'):
-    C=self.conf['_pdf'].get_f(x,Q2)
+    C=conf['_pdf'].get_f(x,Q2)
     C[0]=0 # glue is not supported
     if target=='n': C=self.p2n(C)
     return C
 
   def get_C_ope(self,i,x,Q2,target='p'):
-    C=self.conf['_pdf'].get_f(x,Q2)#[self.forder]
+    C=conf['_pdf'].get_f(x,Q2)#[self.forder]
     if target=='n': C=self.p2n(C)
     return C[i]
 
   def integrand_jpj(self,x,xh,f,bT,zetaF,mu,order):
     integrand=f(x)/(1-x)
     if order>0:
-      alphaS=self.conf['alphaS'].get_alphaS(mu**2)
+      alphaS=conf['alphaS'].get_alphaS(mu**2)
       #alphaS = 0.0
       expression = 2*(np.log(2.0/(mu*bT))-self.gamma_E)*(self.plus(x,xh,lambda xh:f(x/xh)/xh)\
             -(1+xh)*f(x/xh)/xh)+ (1-xh)/xh*f(x/xh)\
@@ -155,7 +155,7 @@ class PDF(CORE):
     integrand=0
     if order>0:
       #alphaS = 0.0
-      alphaS=self.conf['alphaS'].get_alphaS(mu**2)
+      alphaS=conf['alphaS'].get_alphaS(mu**2)
       integrand+=alphaS*self.TF/2.0/np.pi*(2*(1-2*xh*(1-xh))*(np.log(2.0/bT/mu)\
         -self.gamma_E)+2*xh*(1-xh))/xh*f(x/xh)
     return integrand
@@ -171,9 +171,8 @@ class PDF(CORE):
 
 class FF(CORE):
     
-  def __init__(self,conf):
+  def __init__(self):
     self.aux=conf['aux']
-    self.conf=conf
     self.set_default_params()
     self.setup()
     self.forder=[0,3,1,5,7,9,10,8,6,2,4]
@@ -182,7 +181,7 @@ class FF(CORE):
     self.TF=conf['aux'].TF
     self.gamma_E=conf['aux'].euler
     self.C1=2*np.exp(-self.gamma_E)
-    self.bmax=self.conf['gk'].bmax
+    self.bmax=conf['gk'].bmax
 
   # aux functions
   def integrator(self,f,xmin,xmax):
@@ -245,19 +244,19 @@ class FF(CORE):
     self.widths['k-'] =self.kp2km(self.widths['k+'])
 
   def get_C(self,x,Q2,hadron='pi+'):
-    C=self.conf['_ff'].get_f(x,Q2,hadron)
+    C=conf['_ff'].get_f(x,Q2,hadron)
     C[0]=0 # glue is not supported
     return C
 
   def get_C_ope(self,i,x,Q2,hadron='pi+'):
-    C=self.conf['_ff'].get_f(x,Q2,hadron)
+    C=conf['_ff'].get_f(x,Q2,hadron)
     return C[i]
 
   def integrand_jjp(self,z,zh,f,bT,zetaD,mu,order):
     integrand=1/(1-z)*f(z)/z**2
     if order>0:
       #alphaS=0.0
-      alphaS=self.conf['alphaS'].get_alphaS(mu**2)
+      alphaS=conf['alphaS'].get_alphaS(mu**2)
       expression = self.plus(z,zh,lambda zh:2*(np.log(2.0*zh/(mu*bT))-self.gamma_E)*f(z/zh)*zh)\
           +2*(np.log(2.0*zh/(mu*bT))-self.gamma_E)*(1/zh**2+1/zh)*zh*f(z/zh)\
           +(1/zh**2 - 1/zh)*zh*f(z/zh) + 1/(1-z)*(-0.5*(np.log(bT**2*mu**2)-2*(np.log(2)-self.gamma_E))**2\
@@ -269,7 +268,7 @@ class FF(CORE):
     integrand=0
     if order>0:
       #alphaS=0.0
-      alphaS=self.conf['alphaS'].get_alphaS(mu**2)
+      alphaS=conf['alphaS'].get_alphaS(mu**2)
       integrand+=alphaS*self.CF/2.0/np.pi/zh**3*(2*(1+(1-zh)**2)*(np.log(2.0*zh/bT/mu)\
         -self.gamma_E)+zh**2)*zh*f(z/zh)/z**2
     return integrand
@@ -286,9 +285,8 @@ class FF(CORE):
 # class for "toy" evolution
 class GK(CORE):
 
-  def __init__(self,conf):
+  def __init__(self):
     self.aux=conf['aux']
-    self.conf=conf
     self.set_default_params()
 #    self.setup()
 
@@ -303,9 +301,8 @@ class GK(CORE):
 
 class PPDF(CORE):
 
-  def __init__(self,conf):
+  def __init__(self):
     self.aux=conf['aux']
-    self.conf=conf
     self.set_default_params()
     self.setup()
 
@@ -331,7 +328,7 @@ class PPDF(CORE):
     self.widths['n']=self.p2n(self.widths['p'])
 
   def get_C(self,x,Q2,target='p'):
-    C=self.conf['_ppdf'].get_f(x,Q2)
+    C=conf['_ppdf'].get_f(x,Q2)
     C[0]=0 # glue is not supported
     if target=='n': C=self.p2n(C)
     return C

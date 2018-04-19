@@ -13,7 +13,7 @@ import warnings
 warnings.filterwarnings('ignore')
 from timeit import default_timer as timer
 from numpy import linalg as la
-
+from tools.config import conf
 # aux funcs
 
 def lprint(msg):
@@ -83,7 +83,7 @@ class ELLIPSE:
     while 1:
       cnt+=1
       #if cnt%100==0: 
-      print '\nfixing cov attempts:',cnt
+      #print '\nfixing cov attempts:',cnt
       fake_samples=[sample+np.random.randn(sigma.size)*sigma for sample in samples]  
       cov=np.cov(np.transpose(fake_samples))
       if self.is_positive_semi_definite(cov): break
@@ -148,8 +148,8 @@ class ELLIPSE:
       return self.fix_cov1(samples,cov)
       #return self.fix_cov2(samples,cov)
 
-      print 
-      print 'cov is singular'
+      #print 
+      #print 'cov is singular'
       sys.exit() 
 
   def gen_new_samples(self):
@@ -173,8 +173,9 @@ class ELLIPSE:
 
 class NEST:
 
-  def __init__(self,conf):
-    self.conf=conf
+  def __init__(self,verb=True):
+    np.random.seed()
+    self.verb=verb
     self.get_nll = conf['nll']
     self.pmin=np.array([entry[0] for entry in conf['par lims']])
     self.pmax=np.array([entry[1] for entry in conf['par lims']])
@@ -224,27 +225,29 @@ class NEST:
     pmax=np.amax(self.active_p,axis=0)
     dp=(pmax-pmin)
     self.Vk=np.prod(dp)
-    dp=(pmax-pmin)*self.conf['kappa']
-    pmid=0.5*(pmin+pmax)
-    pmin=pmid-dp/2
+    #dp=(pmax-pmin)*conf['kappa']
+    #pmid=0.5*(pmin+pmax)
+    #pmin=pmid-dp/2
     while 1:
       self.attempts2+=1
 
-      if self.attempts2>1000:
-        pmin=np.amin(self.active_p,axis=0)
-        pmax=np.amax(self.active_p,axis=0)
-        dp=(pmax-pmin)
-        self.conf['kappa']=1
+      #if self.attempts2>1000:
+      #  pmin=np.amin(self.active_p,axis=0)
+      #  pmax=np.amax(self.active_p,axis=0)
+      #  dp=(pmax-pmin)
+      #  conf['kappa']=1
+      #u=uniform(0,1,self.dim)
+      #p=pmin + u*dp
 
-      u=uniform(0,1,self.dim)
-      p=pmin + u*dp
+      p=self.gen_par()
+
       if any([x<0 for x in p-self.pmin]) or any([x<0 for x in self.pmax-p]): continue
       _nll = self.get_nll(p)
       if _nll<nll: break
     return p,_nll 
   
   def gen_par_kde(self,nll):
-    kde=gaussian_kde(np.transpose(self.active_p),self.conf['kde bw'])
+    kde=gaussian_kde(np.transpose(self.active_p),conf['kde bw'])
     self.attempts=0
     while 1:
       p=np.transpose(kde.resample(1))[0]
@@ -257,8 +260,8 @@ class NEST:
   
   def gen_par_hmc(self,par,nll):
     dim=len(par)  
-    delta=0.1#self.conf['hmc delta']
-    steps=30#self.conf['hmc steps']
+    delta=0.1#conf['hmc delta']
+    steps=30#conf['hmc steps']
   
     get_U=lambda q: self.get_nll(q)
     
@@ -294,7 +297,7 @@ class NEST:
   def gen_par_cov(self,nll,p0=None,verb=False):
     self.attempts1=0
     self.attempts2=0
-    ellipse=ELLIPSE(self.active_p,self.conf['kappa'],self.cnt,self.conf['sample size'])
+    ellipse=ELLIPSE(self.active_p,conf['kappa'],self.cnt,conf['sample size'])
     self.Vk=ellipse.V
     cnt=0
     while 1:
@@ -329,11 +332,11 @@ class NEST:
     self.samples_x.append(self.samples_x[-1]*self.factor)  
     self.cnt+=1
   
-    _p,_nll=self.gen_par_flat(nll)
-    #if self.cnt<self.conf['burn size']:
+    #_p,_nll=self.gen_par_flat(nll)
+    _p,_nll=self.gen_par_cov(nll,p)
+    #if self.cnt<conf['burn size']:
     #  _p,_nll=self.gen_par_flat(nll)
     #else:
-    #  _p,_nll=self.gen_par_cov(nll,p)
   
     self.active_nll.append(_nll)
     self.active_p.append(_p)
@@ -346,7 +349,7 @@ class NEST:
     self.active_nll=[]
     cnt_active=0
     while 1:
-      lprint('getting initial active p: %d/%d'%(cnt_active+1,N))
+      if self.verb: lprint('getting initial active p: %d/%d'%(cnt_active+1,N))
       p=self.gen_par()
       nll=self.get_nll(p)
       cnt_active+=1
@@ -359,26 +362,23 @@ class NEST:
     self.logz.append(self.get_logz())
     if self.cnt>2: 
       #z_past=np.average([np.exp(self.logz[-2]),np.exp(self.logz[-3]),np.exp(self.logz[-4])])
-      std=np.std(np.array(self.active_nll)+self.conf['data size'])
-      mean=np.mean(np.array(self.active_nll)+self.conf['data size'])
+      std=np.std(np.array(self.active_nll)+conf['data size'])
+      mean=np.mean(np.array(self.active_nll)+conf['data size'])
       #z_current=np.exp(self.logz[-1])
       #rel = np.abs(1-z_past/z_current)
       rel = std/mean
-      nllmax=np.amax(self.active_nll)
-      nllmin=np.amin(self.active_nll)
-      msg='iter=%d  logz=%.3f rel-err=%.3e  t-elapsed=%.3e  nll_min=%.3e nll_max=%0.3e  attemps1=%10d  attemps2=%10d Vk/V0=%0.3e  %s  '
-      msg=msg%(self.cnt,self.logz[-1],rel,t_elapsed,nllmin,nllmax,self.attempts1,self.attempts2,self.Vk/self.V0,self.msg)
-      lprint(msg)
+      dchi2max=2*np.amax(self.active_nll)
+      dchi2min=2*np.amin(self.active_nll)
+      msg='iter=%d  logz=%.3f rel-err=%.3e  t-elapsed=%.3e  dchi2min=%.3e dchi2max=%0.3e'
+      msg=msg%(self.cnt,self.logz[-1],rel,t_elapsed,dchi2min,dchi2max)
+      if self.verb: lprint(msg)
       # stopping criterion
-      if 'itmax' in self.conf and self.cnt==self.conf['itmax']: 
+      if 'itmax' in conf and self.cnt==conf['itmax']: 
         self.status='stop'
-      if self.logz[-1]>-1e10  and self.conf['tol']!=None:
-        if rel<self.conf['tol']: self.status='stop'
-        #l=np.exp(-self.active_nll[0])
-        #x=self.samples_x[-1]
-        #dz=l*x
-        #if np.log(dz)<self.logz[-1]+np.log(self.conf['tol']):
-        #  self.status='stop'
+      if self.logz[-1]>-1e10  and conf['tol']!=None:
+        if rel<conf['tol']: self.status='stop'
+      if np.isinf(self.logz[-1]) and self.cnt>1000: 
+        if rel<conf['tol']: self.status='stop'
 
   def results(self):
     dx=0.5*(np.array(self.samples_x[:-1])-np.array(self.samples_x[1:]))
@@ -400,15 +400,11 @@ class NEST:
   def run(self):
   
     t1=timer()
-    print 
+    #print 
     while 1:
-      try:
-        t2=timer()
-        self.next(t2-t1)
-        if self.status=='stop': break
-      except KeyboardInterrupt:
-        break
-    print 
+      t2=timer()
+      self.next(t2-t1)
+      if self.status=='stop': break
     return self.results() 
 
 def example1():

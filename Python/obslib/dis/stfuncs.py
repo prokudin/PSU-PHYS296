@@ -8,12 +8,12 @@ from qcdlib.aux import AUX
 from qcdlib.alphaS import ALPHAS
 #from external.CJLIB.CJ import CJ
 from external.PDF.CT10 import CT10
+from tools.config import conf
 
 class STFUNCS:
   
-  def __init__(self,conf):
+  def __init__(self):
     self.aux=conf['aux']
-    self.conf=conf
     self.CF = self.aux.CF
     self.TR = self.aux.TR
     self.CA = self.aux.CA
@@ -81,9 +81,9 @@ class STFUNCS:
   def get_F2(self,x,Q2,hadron,method='gauss',n=20):
     if (x,Q2,hadron) not in self.storage:
       self.hadron=hadron
-      self.Nf=self.conf['alphaS'].get_Nf(Q2)
-      #alpi=self.conf['alphaS'].get_alphaS(Q2)/(2.*np.pi)
-      self.get_PDFs=lambda y: self.conf['pdf-NLO'].get_f(y,Q2)
+      self.Nf=conf['alphaS'].get_Nf(Q2)
+      #alpi=conf['alphaS'].get_alphaS(Q2)/(2.*np.pi)
+      self.get_PDFs=lambda y: conf['pdf-NLO'].get_f(y,Q2)
       LO=self.qplus(self.get_PDFs(x))
       #integrand=lambda z:self.integrand(x,z,Q2)
       #NLO=self.integrator(integrand,x,1,method,n=n)
