@@ -6,7 +6,10 @@ from speedtest import SPEEDTEST
 from tools.tools import load_config
 
 
-def conf_run(conf, task, noexit=True):
+def conf_run(conf, task=None, noexit=True):
+    if task is None:
+        task = conf["args"].task
+
     if noexit:
         conf["screen mode"] = "please don't sys.exit"
 
@@ -34,14 +37,7 @@ def conf_run(conf, task, noexit=True):
     return conf
 
 
-def run(config,
-        task=0,
-        runid=0,
-        file="",
-        list=[],
-        reaction="sidis",
-        noexit=True
-        ):
+def gen_config(config, task=0, runid=0, file="", list=[], reaction="sidis"):
 
     args = Namespace(
         config=config,
@@ -55,8 +51,9 @@ def run(config,
     conf = load_config(args.config)
     conf["args"] = args
 
-    return conf_run(conf, task, noexit=noexit)
+    return conf
 
 
 if __name__ == "__main__":
-    conf = run("inputs/upol_hermes_noevolution.py", task=1)
+    conf = gen_config("inputs/upol_hermes_noevolution.py", task=1)
+    conf_run(conf)
