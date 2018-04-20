@@ -16,10 +16,11 @@ import pylab as py
 #import matplotlib.pyplot as plt
 from tools.hankel.inverters import Ogata, Quad, Fix_Quad
 import ogata
+from tools.config import conf
 
 class STFUNCS:  # creating a class of
 
-  def __init__(self,conf):
+  def __init__(self):
     self.aux=conf['aux']
     self.CF = conf['aux'].CF
     self.C2=1.0
@@ -67,12 +68,12 @@ class STFUNCS:  # creating a class of
 
 # defining functions
   def get_wq(self,z,k1,k2,target,hadron):
-    return z**2*np.abs(self.conf[k1].widths[target]) + np.abs(self.conf[k2].widths[hadron])
+    return z**2*np.abs(conf[k1].widths[target]) + np.abs(conf[k2].widths[hadron])
 
   def get_wq_evolution(self,z,x,Q):
     wq=np.ones(len(self.e2))
-    return wq * 4*z**2 * self.conf['gk'].g2 * np.log( (z*Q)/(x*self.conf['gk'].Q0) )
-#    return wq * 4*z**2 * self.conf['gk'].g2 * np.log( (Q)/(self.conf['gk'].Q0) )
+    return wq * 4*z**2 * conf['gk'].g2 * np.log( (z*Q)/(x*conf['gk'].Q0) )
+#    return wq * 4*z**2 * conf['gk'].g2 * np.log( (Q)/(conf['gk'].Q0) )
 
   def get_gauss(self,z,pT,wq):
     return np.exp(-pT**2/wq)/(np.pi*wq)
@@ -84,8 +85,8 @@ class STFUNCS:  # creating a class of
     if k1==None or k2==None: return 0
     mu2=Q2
     Q = np.sqrt(Q2)
-    F=self.conf[k1].get_C(x,mu2,target)
-    D=self.conf[k2].get_C(z,mu2,hadron)
+    F=conf[k1].get_C(x,mu2,target)
+    D=conf[k2].get_C(z,mu2,hadron)
     wq=self.get_wq(z,k1,k2,target,hadron) # +  self.get_wq_evolution(z,x,Q)
     gauss=self.get_gauss(z,pT,wq) 
     K=self.get_K(i,x,Q2,z,pT,wq,k1,k2,target,hadron)
@@ -104,11 +105,11 @@ class STFUNCS:  # creating a class of
 
 # bc
   def bc(self,b):
-    return np.sqrt(b**2+(self.conf['gk'].bmin)**2)
+    return np.sqrt(b**2+(conf['gk'].bmin)**2)
 
 # bstar
   def bstar(self,b):
-    return b/np.sqrt(1+b**2/(self.conf['gk'].bmax)**2)
+    return b/np.sqrt(1+b**2/(conf['gk'].bmax)**2)
 
 # mub
   def mub(self,b):
@@ -117,28 +118,28 @@ class STFUNCS:  # creating a class of
 # gk function
 #  def get_gk(self,b,z,x,Q):
 #    wq=np.ones(len(self.e2))
-#    return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (z*Q)/(x*self.conf['gk'].Q0) )
-#    return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (Q)/(self.conf['gk'].Q0) )
+#    return wq * conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (z*Q)/(x*conf['gk'].Q0) )
+#    return wq * conf['gk'].g2 * np.log(b/self.bstar(b)) * np.log( (Q)/(conf['gk'].Q0) )
 
     
     # gk function (b)
   def get_gk(self,b):
     wq=np.ones(len(self.e2))
-    return wq * self.conf['gk'].g2 * np.log(b/self.bstar(b))
+    return wq * conf['gk'].g2 * np.log(b/self.bstar(b))
 
     
 # Zeta prescription renormalization factor
   def ZETA_PRESCRIPTION(self, muf, zetaf, x, z, b):
     #CF = self.CF
     C0 = 2*np.exp(-np.euler_gamma)
-    #gamma = self.conf['alphaS'].get_alphaS(muf**2)*CF/np.pi
+    #gamma = conf['alphaS'].get_alphaS(muf**2)*CF/np.pi
     vf = 3.0/2.0+0.0
     #return gamma*np.log(muf*2*b/2./C0)*(np.log(zetaf*b/C0/muf)+vf)
     gk = self.get_gk(b)
     #pertutbative part of D
     #gamma0 = 4. * self.CF
     #beta0 = 11.-2./3.*3.  # self.nf
-    #X=18.*self.conf['alphaS'].get_alphaS(muf**2)*np.log(muf*b*C0) 
+    #X=18.*conf['alphaS'].get_alphaS(muf**2)*np.log(muf*b*C0) 
     #print self.bstar(b)*C0
     #lX=np.log(1.-X)        
     #Dresummed=-8./27.*lX
@@ -147,7 +148,7 @@ class STFUNCS:  # creating a class of
     
 # intrinsic widths
   def get_width(self,b,z,k1,k2,target,hadron):
-    return np.abs(self.conf[k1].widths[target])/4 + np.abs(self.conf[k2].widths[hadron])/(4*z**2)
+    return np.abs(conf[k1].widths[target])/4 + np.abs(conf[k2].widths[hadron])/(4*z**2)
 
 
 # Structure functions in b space no evolution prescriprion
@@ -157,8 +158,8 @@ class STFUNCS:  # creating a class of
     if k1==None or k2==None: return 0
     mu2=Q2
     if mu2>1000: mu2 = 1000.
-    F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
-    D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
+    F=conf[k1].get_C(x,mu2,target)/(2*np.pi)
+    D=conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
     width=self.get_width(b,z,k1,k2,target,hadron)*b**2  
     K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
     return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
@@ -174,8 +175,8 @@ class STFUNCS:  # creating a class of
 #    muf=Q
 #    zetaf=Q2
 #    if mu2>1000: mu2 = 1000.
-#    F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
-#    D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
+#    F=conf[k1].get_C(x,mu2,target)/(2*np.pi)
+#    D=conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
 #    width=self.get_width(b,z,k1,k2,target,hadron)*b**2  +  self.ZETA_PRESCRIPTION(muf, zetaf, x, z, b)
 #    K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
 #    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
@@ -201,7 +202,7 @@ class STFUNCS:  # creating a class of
 
   def ope_evo(self,bT,Q,order):
     if order == 0: return 0
-    elif order == 1: return self.Int_gammas_ope(bT,Q)-2*self.Int_gammak(self.mub(bT),self.C2*self.conf['gk'].Q0)*np.log(Q/self.conf['gk'].Q0)
+    elif order == 1: return self.Int_gammas_ope(bT,Q)-2*self.Int_gammak(self.mub(bT),self.C2*conf['gk'].Q0)*np.log(Q/conf['gk'].Q0)
 
 # Hard Factor
 
@@ -221,19 +222,19 @@ class STFUNCS:  # creating a class of
 #    mu2=(self.mub(b))**2
 #    Q = np.sqrt(Q2)
 #    if mu2>1000: mu2 = 1000.
-#    #F=self.conf[k1].get_C(x,mu2,target)/(2*np.pi)
-#    #D=self.conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
-#    F=self.conf[k1].get_ope_C(x,self.bstar(b),mu2,np.sqrt(mu2),target,order)/(2*np.pi)
-#    D=self.conf[k2].get_ope_C(z,self.bstar(b),mu2,np.sqrt(mu2),hadron,order)/(2*np.pi*z**2)
+#    #F=conf[k1].get_C(x,mu2,target)/(2*np.pi)
+#    #D=conf[k2].get_C(z,mu2,hadron)/(2*np.pi*z**2)
+#    F=conf[k1].get_ope_C(x,self.bstar(b),mu2,np.sqrt(mu2),target,order)/(2*np.pi)
+#    D=conf[k2].get_ope_C(z,self.bstar(b),mu2,np.sqrt(mu2),hadron,order)/(2*np.pi*z**2)
 #    width=self.get_width(b,z,k1,k2,target,hadron)*b**2\
-#          +self.get_gk(b)*np.log((Q)/(self.conf['gk'].Q0))\
+#          +self.get_gk(b)*np.log((Q)/(conf['gk'].Q0))\
 #          -self.ope_evo(b,Q,order)
 #    K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
 #    return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))  #sums up the contributions
     
 # Method by Jianwei
   def get_FX_b_jianwei(self,i,x,z,Q2,pT,b,target,hadron):
-      if ( b > self.conf['gk'].b_max):
+      if ( b > conf['gk'].b_max):
           return self.get_FX_b(i,x,z,Q2,pT,b,target,hadron)
       else:
           # Andrea and Tianbo will work here
