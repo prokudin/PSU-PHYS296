@@ -234,11 +234,38 @@ class STFUNCS:  # creating a class of
     
 # Method by Jianwei
   def get_FX_b_jianwei(self,i,x,z,Q2,pT,b,target,hadron):
-      if ( b > conf['gk'].b_max):
-          return self.get_FX_b(i,x,z,Q2,pT,b,target,hadron)
+      # Andrea and Tianbo will work here
+      k1=self.D[i]['k1']
+      k2=self.D[i]['k2']
+      if k1 == None or k2 == None:
+          return 0
+      if (b <= conf['gk'].bmax):
+          mu2 = (2*np.exp(-np.euler_gamma)/self.bc(b)) ** 2
+          Q = Q2 ** 0.5
+          #if mu2>1000: mu2 = 1000. ???
+          F=conf[k1].get_ope_C(x,self.bc(b),mu2,np.sqrt(mu2),target,order)/(2*np.pi)
+          D=conf[k2].get_ope_C(z,self.bc(b),mu2,np.sqrt(mu2),hadron,order)/(2*np.pi*z**2)
+          width = 0.
+          K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
+          return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))
       else:
+          mu2 = (2*np.exp(-np.euler_gamma)/conf['gk'].bmax) ** 2
+          h = 1e-6
+          fx = get_FX_b_jianwei(i,x,z,Q2,pT,conf['gk'].bmax,target,hadron)
+          fxh = get_FX_b_jianwei(i,x,z,Q2,pT,conf['gk'].bmax-h,target,hadron)
+          fx2h = get_FX_b_jianwei(i,x,z,Q2,pT,conf['gk'].bmax-2*h,target,hadron)
+          g2 = conf['gk'].g2
+          db1 = (fx - fxh) / h
+          db2 = (fx2h - 2.0 * fxh + fx) / (h ** 2)
+          alp = 0.5 * (1.0  / (db1 / (2.0 * fx * conf['gk'].bmax) + g2) * (g2 + db2 / (2.0 * fx) - db1 ** 2 / (2.0 * fx ** 2)) + 1)
+          g1 = -conf['gk'].bmax ** (1.0 - 2.0 * alp) / alp * (db1 / (2.0 * fx) + g2 * conf['gk'].bmax)
+          width = g1 * (b ** (2.0 * alp) - conf['gk'].bmax ** (2.0 * alp)) + g2 * (b ** 2 - conf['gk'].bmax ** 2))
+          #res = coll_ff(iq, x, Q0min) * kernel_q(iq, x, Q0min, Q, Q0min, Q, order) * FNP
+          K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
+          F=conf[k1].get_ope_C(x,conf['gk'].bmax,mu2,np.sqrt(mu2),target,order)/(2*np.pi)
+          D=conf[k2].get_ope_C(z,conf['gk'].bmax,mu2,np.sqrt(mu2),hadron,order)/(2*np.pi*z**2)
+          return 2*np.pi*np.sum(self.e2*K*F*D*np.exp(-width))
           # Andrea and Tianbo will work here
-          return 1./2.
 
 # Structure function FUU in b space
   def FUU_b(self,x,Q2,y,z,q,b,target,hadron,order=0):
