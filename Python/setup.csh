@@ -1,0 +1,3 @@
+set FITPACK = `pwd`   
+setenv PYTHONPATH ${FITPACK}:${PYTHONPATH}
+
