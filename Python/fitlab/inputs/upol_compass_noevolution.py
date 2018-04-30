@@ -13,7 +13,6 @@ conf['screen mode']='plain'
 
 ############################################################################
 # mcsetup
-
 conf['method']='kde'
 conf['itmax']=None
 conf['tol']=1e-6
@@ -21,13 +20,6 @@ conf['kde bw']=None
 conf['num points factor']=10
 
 
-############################################################################
-# paths to external
-
-#conf['path2CJ'] ='../external/CJLIB'
-conf['path2CT10'] ='../external/PDF'
-conf['path2LSS']='../external/LSSLIB'
-conf['path2DSS']='../external/DSSLIB'
 
 ############################################################################
 # params
