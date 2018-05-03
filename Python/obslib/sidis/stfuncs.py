@@ -254,12 +254,13 @@ class STFUNCS:  # creating a class of
           fx = self.get_FX_b_jianwei(i,x,z,Q2,pT,conf['gk'].bmax,target,hadron)
           fxh = self.get_FX_b_jianwei(i,x,z,Q2,pT,conf['gk'].bmax-h,target,hadron)
           fx2h = self.get_FX_b_jianwei(i,x,z,Q2,pT,conf['gk'].bmax-2*h,target,hadron)
-          g2 = conf['gk'].g2
+          g2t = conf['gk'].g2 * np.log(Q2 / mu2) + conf['gk'].g2bar
           db1 = (fx - fxh) / h
-          db2 = (fx2h - 2.0 * fxh + fx) / (h ** 2)
-          alp = 0.5 * (1.0  / (db1 / (2.0 * fx * conf['gk'].bmax) + g2) * (g2 + db2 / (2.0 * fx) - db1 ** 2 / (2.0 * fx ** 2)) + 1)
-          g1 = -conf['gk'].bmax ** (1.0 - 2.0 * alp) / alp * (db1 / (2.0 * fx) + g2 * conf['gk'].bmax)
-          width = (g1 * (b ** (2.0 * alp) - conf['gk'].bmax ** (2.0 * alp)) + g2 * (b ** 2 - conf['gk'].bmax ** 2))*np.log(Q2/mu2)
+          db2 = (fx2h - 2.0 * fxh + fx) / (h ** 2)         
+          alp = 0.5 * (1.0  / (db1 / (2.0 * fx * conf['gk'].bmax) + g2t) * (g2t + db2 / (2.0 * fx) - db1 ** 2 / (2.0 * fx ** 2)) + 1)
+          g1t = -conf['gk'].bmax ** (1.0 - 2.0 * alp) / alp * (db1 / (2.0 * fx) + g2t * conf['gk'].bmax)
+          # g1t = g1 * log(Q2 / mu2)
+          width = (g1t * (b ** (2.0 * alp) - conf['gk'].bmax ** (2.0 * alp)) + g2t * (b ** 2 - conf['gk'].bmax ** 2))
           #res = coll_ff(iq, x, Q0min) * kernel_q(iq, x, Q0min, Q, Q0min, Q, order) * FNP
           K=self.get_K(i,x,Q2,z,pT,width,k1,k2,target,hadron)
           F=conf[k1].get_ope_C(x,conf['gk'].bmax,mu2,np.sqrt(mu2),target,order)/(2*np.pi)
@@ -380,8 +381,8 @@ if __name__=='__main__':
     stfuncs=STFUNCS()
     x=0.25
     z=0.5
-    Q2=10000.
-    mu2=2.0
+    Q2=-1.
+    #mu2=2.0
     E=11.0
     m=0.938
     y=Q2/(2*m*E*x)
@@ -389,11 +390,16 @@ if __name__=='__main__':
     hadron='pi+'
 
 
-    bT = np.logspace(-2, 1., 300)
+    bT = np.logspace(-2, 1., 30)
     pT = 1.
     order=0
+
+    #print stfuncs.get_FX_b_jianwei(1,x,z,Q2,pT,bT[10],target,hadron,order)
+    #sys.exit()
+
     FUUbjianwei = [stfuncs.get_FX_b_jianwei(1,x,z,Q2,pT,b,target,hadron,order) for b in bT]
     #FUUbjianwei = [stfuncs.get_FX_b_css(1,x,z,Q2,pT,b,target,hadron,order) for b in bT]
+    
     ax = py.subplot(121)
     ax.plot(bT, FUUbjianwei,'o-',label = 'Jianwei')
     ax.set_xlabel('b', fontsize=10)
@@ -402,7 +408,7 @@ if __name__=='__main__':
     #ax.semilogy()
     ax.legend()
     py.tight_layout()
-    py.show()
+    py.savefig("temp.png")
     
     
     # Compare CSS and Gaussian in b space

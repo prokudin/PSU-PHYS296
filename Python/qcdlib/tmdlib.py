@@ -292,6 +292,7 @@ class GK(CORE):
 
   def set_default_params(self):
     self.g2=0.1
+    self.g2bar=0.1
     self.Q0=1.
     self.bmax=1.
     self.bmin=0.1
