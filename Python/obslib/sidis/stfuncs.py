@@ -4,6 +4,7 @@ import numpy as np
 import math
 sys.path.append('./../../') #this appends/searches for the contents of the 
                   #the dir/folders that are two directories back
+import pandas as pd
 from tools.tools import load_config
 from scipy.integrate import quad
 from external.PDF.CT10 import CT10
@@ -363,7 +364,7 @@ if __name__=='__main__':
     conf['path2LSS']='../../external/LSSLIB'
     conf['path2DSS']='../../external/DSSLIB'
     
-    conf['order']='LO'
+    conf['order']='NLO'
     conf['aux']  =AUX()
     conf['_pdf'] =CJ(conf)
     #conf['_pdf'] =CT10(conf)
@@ -388,27 +389,47 @@ if __name__=='__main__':
     y=Q2/(2*m*E*x)
     target='p'
     hadron='pi+'
-
-
-    bT = np.logspace(-2, 1., 30)
-    pT = 1.
-    order=0
-
-    #print stfuncs.get_FX_b_jianwei(1,x,z,Q2,pT,bT[10],target,hadron,order)
-    #sys.exit()
-
-    FUUbjianwei = [stfuncs.get_FX_b_jianwei(1,x,z,Q2,pT,b,target,hadron,order) for b in bT]
-    #FUUbjianwei = [stfuncs.get_FX_b_css(1,x,z,Q2,pT,b,target,hadron,order) for b in bT]
     
-    ax = py.subplot(121)
-    ax.plot(bT, FUUbjianwei,'o-',label = 'Jianwei')
-    ax.set_xlabel('b', fontsize=10)
-    ax.set_ylabel('b FUU(b, x='+str(x)+', z='+str(z)+', Q2='+str(Q2)+')', fontsize=10)
-    ax.semilogx()
-    #ax.semilogy()
-    ax.legend()
-    py.tight_layout()
-    py.savefig("temp.png")
+    #AlphaS ratios at NLO. Change conf['order'] to check LO
+
+    with open('../../benchmark/'+conf['order']+'_ADs.dat','r') as f:
+      next(f) # skip first row
+      next(f) # skip first row
+      next(f) # skip first row
+      dfinit = pd.DataFrame(l.rstrip().split() for l in f)
+      
+    df={}
+    for i in range(len(dfinit.columns)-2):
+      df[dfinit[i+1][0]]=[float(val) for val in dfinit[i][1:]]
+    #print df['GammaCusp(mu)']
+
+    data={}
+    data['mu']=df['mu']
+    data['AS']=[conf['alphaS'].get_alphaS(mu**2)/4/np.pi for mu in data['mu']]
+    print [data['AS'][i]/df['as(mu)=g^2/(4pi)^2'][i] for i in range(len(data['AS']))]
+    #data['gammak']=[stfuncs.gamma_k(mu) for mu in data['mu']]
+    #print data['gammak']
+
+
+#    bT = np.logspace(-2, 1., 30)
+#    pT = 1.
+#    order=0
+#
+#    #print stfuncs.get_FX_b_jianwei(1,x,z,Q2,pT,bT[10],target,hadron,order)
+#    #sys.exit()
+#
+#    FUUbjianwei = [stfuncs.get_FX_b_jianwei(1,x,z,Q2,pT,b,target,hadron,order) for b in bT]
+#    #FUUbjianwei = [stfuncs.get_FX_b_css(1,x,z,Q2,pT,b,target,hadron,order) for b in bT]
+#    
+#    ax = py.subplot(121)
+#    ax.plot(bT, FUUbjianwei,'o-',label = 'Jianwei')
+#    ax.set_xlabel('b', fontsize=10)
+#    ax.set_ylabel('b FUU(b, x='+str(x)+', z='+str(z)+', Q2='+str(Q2)+')', fontsize=10)
+#    ax.semilogx()
+#    #ax.semilogy()
+#    ax.legend()
+#    py.tight_layout()
+#    py.savefig("temp.png")
     
     
     # Compare CSS and Gaussian in b space
