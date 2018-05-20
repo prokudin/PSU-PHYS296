@@ -14,7 +14,7 @@ from scipy.integrate import quad,dblquad,fixed_quad
 
 class CT10:
 
-  def __init__(self, conf):
+  def __init__(self,conf):
     #,root='../',filename='ct10.00.pds'):
     """
     Read and parse CT10.pds. May work with other 

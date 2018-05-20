@@ -74,6 +74,7 @@ class _RESIDUALS:
       ncpus=conf['ncpus']
     else: 
       ncpus=1
+    print '\nmultiprocess setup: ncpus=%d / observable'%ncpus
     self.mproc=MULTIPROC(ncpus,self._get_theory,data)
 
   # routines for IMC analysis

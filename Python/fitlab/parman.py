@@ -98,10 +98,15 @@ class PARMAN:
     conf['pdf'].setup() 
   
   def set_ff_params(self):
-    conf['ff'].widths0['pi+ fav']=conf['params']['ff']['widths0 pi+ fav']['value']
-    conf['ff'].widths0['pi+ unfav']=conf['params']['ff']['widths0 pi+ unfav']['value']
-    conf['ff'].widths0['k+ fav']=conf['params']['ff']['widths0 k+ fav']['value']
-    conf['ff'].widths0['k+ unfav']=conf['params']['ff']['widths0 k+ unfav']['value']
+    if 'widths0 h+ fav' in conf['params']['ff']:
+      conf['ff'].widths0['h+ fav']=conf['params']['ff']['widths0 h+ fav']['value']
+      conf['ff'].widths0['h+ unfav']=conf['params']['ff']['widths0 h+ unfav']['value']
+    if 'widths0 pi+ fav' in conf['params']['ff']:
+      conf['ff'].widths0['pi+ fav']=conf['params']['ff']['widths0 pi+ fav']['value']
+      conf['ff'].widths0['pi+ unfav']=conf['params']['ff']['widths0 pi+ unfav']['value']
+    if 'widths0 k+ fav' in conf['params']['ff']:
+      conf['ff'].widths0['k+ fav']=conf['params']['ff']['widths0 k+ fav']['value']
+      conf['ff'].widths0['k+ unfav']=conf['params']['ff']['widths0 k+ unfav']['value']
     conf['ff'].setup() 
 
   def set_gk_params(self):
